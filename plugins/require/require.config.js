@@ -9,5 +9,8 @@ requirejs = {
         widget: "../plugins/widget/widget",
         render: "../plugins/render/render",
         widgets: "../widgets/"
+    },
+    shim: {
+        //bootstrap: ["popper"]
     }
 };

@@ -1,0 +1,111 @@
+.layout{
+    display: flex;
+    flex-direction: column;
+}
+.layout-header{
+    display: flex;
+}
+.layout-brand{
+    display: block;
+    background-color: #343a40;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+.layout-brand .toggle{
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    transition: width 0.35s ease-in-out;
+}
+.layout-brand .max{
+    width: 230px;
+}
+.layout-brand .min{
+    width: 50px;
+}
+.layout-topbar{
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    background-color: #343a40;
+    font-size: 1.2rem;
+}
+.layout-topbar .toggle{
+    display: block;
+    background-color: #343a40;
+    color: #fff;
+    height: 50px;
+    line-height: 50px;
+    padding: 0 20px;
+}
+.layout-topbar .nav{
+    display: flex;
+    margin-left: auto;
+}
+.layout-topbar .dropdown-toggle{
+    display: block;
+    background-color: #343a40;
+    color: #fff;
+    height: 50px;
+    line-height: 50px;
+    padding: 0 20px;
+}
+.layout-topbar .dropdown-menu{
+    right: 0;
+    left: auto;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+.layout-main{
+    display: flex;
+}
+.layout-aside{
+    background-color: #343a40;
+    transition: width 0.35s ease-in-out;
+
+}
+.layout-aside .max{
+    width: 230px;
+}
+.layout-aside .min{
+    width: 50px;
+}
+.layout-aside .menu {
+    padding-left: 0;
+    list-style: none;
+}
+.layout-aside .menu-a{
+    display: block;
+    background-color: #343a40;
+    color: #fff;
+    padding: 0 15px;
+    height: 44px;
+    line-height: 44px;
+    text-indent: 35px;
+    overflow: hidden;
+}
+.layout-aside .fa{
+    text-indent: -35px;
+    font-size: 1.25rem;
+}
+.layout-aside span + .fa{
+    .float-right;
+    line-height: 44px;
+    text-indent: 0;
+}
+.layout-article{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.layout-title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 1rem;
+}
+.layout-content{
+    padding: 1rem;
+}

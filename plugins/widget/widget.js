@@ -569,7 +569,8 @@ $.Widget.prototype = {
         }
 
         $.each( handlers, function( event, handler ) {
-            function handlerProxy() {
+            function handlerProxy(e) {
+                var raw, args = [e];
 
                 // Allow widgets to customize the disabled handling
                 // - disabled as an array instead of boolean
@@ -579,8 +580,13 @@ $.Widget.prototype = {
                         $( this ).hasClass( "ui-state-disabled" ) ) ) {
                     return;
                 }
+
+                if(raw = $(e.currentTarget).raw()){
+                    args.push(raw);
+                }
+
                 return ( typeof handler === "string" ? instance[ handler ] : handler )
-                    .apply( instance, arguments );
+                    .apply( instance, args );
             }
 
             // Copy the guid so direct unbinding works

@@ -6,8 +6,6 @@ define(["jquery", "widget"], function ($) {
 
 var slice = Array.prototype.slice;
 
-var selectorReg = /^([\w-]+)(?:#([\w-]+))?(?:\.([\.\w-]+))?$/;
-
 var eventReg = /^([\w:-]*)\s*(.*)$/;
 
 
@@ -57,9 +55,7 @@ var Sel = {
     }
 };
 
-
 ////----
-
 
 var Raw = function (data, render, parent, node) {
 
@@ -149,11 +145,8 @@ Raw.prototype = {
             if($.isArray(v)){
                 this.getArrayChild(v, children);
             }
-            else{
-                if(v == null || typeof v === "boolean"){}
-                else{
-                    children.push(String(v));
-                }
+            else if(v != null && typeof v !== "boolean"){
+                children.push(String(v));
             }
         }
         if(children.length === 1 && typeof children[0] === "string"){
@@ -169,7 +162,12 @@ Raw.prototype = {
         var that = this;
         if($.isArray(child[0])){
             $.each(child, function(i, c){
-                that.getArrayChild(c, children);
+                if($.isArray(c)){
+                    that.getArrayChild(c, children);
+                }
+                else if(c != null && typeof c !== "boolean"){
+                    children.push(String(c));
+                }
             });
         }
         else if(typeof child[0] === "string"){
@@ -336,9 +334,7 @@ Raw.prototype = {
     }
 };
 
-
 ////----
-
 
 var Diff = function(){};
 
@@ -930,7 +926,6 @@ Diff.prototype = {
     },
 
     patch: function(oldRaw, raw) {
-        var that = this;
 
         if(!oldRaw && !raw){
             return;
@@ -1053,24 +1048,26 @@ Render.prototype = {
     mergeRaw: function(update){
 
         var element = $(this.node);
-        var raw;
 
         if(this.raw){
 
             if(!this.raw.widget){
                 this.raw.tag = element.prop("tagName").toLowerCase();
-                this.raw.selector = this.raw.tag + this.raw.selector;
+                //this.raw.selector = this.raw.tag + this.raw.selector;
             }
 
-            raw = element.data("_raw_") || this.diff.createRawByNode(this.node);
-            if(raw.data.style){
-                this.raw.data.style = $.widget.extend({}, raw.data.style, this.raw.data.style);
+            if(!this.defaultRaw){
+                this.defaultRaw = element.data("_raw_") || this.diff.createRawByNode(this.node);
             }
-            if(raw.data.class){
-                this.raw.data.class = $.widget.extend({}, raw.data.class, this.raw.data.class);
+
+            if(this.defaultRaw.data.style){
+                this.raw.data.style = $.widget.extend({}, this.defaultRaw.data.style, this.raw.data.style);
             }
-            if(raw.data.attrs){
-                this.raw.data.attrs = $.widget.extend({}, raw.data.attrs, this.raw.data.attrs);
+            if(this.defaultRaw.data.class){
+                this.raw.data.class = $.widget.extend({}, this.defaultRaw.data.class, this.raw.data.class);
+            }
+            if(this.defaultRaw.data.attrs){
+                this.raw.data.attrs = $.widget.extend({}, this.defaultRaw.data.attrs, this.raw.data.attrs);
             }
         }
     },
