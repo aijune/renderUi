@@ -1,7 +1,7 @@
-require(["jquery", "widgets/Layout"], function($){
+require(["jquery", "widgets/layout"], function($){
 
     $("#layout").render(function () {
-        return ["Layout"];
+        return ["widget[name=layout]"];
     });
 
 });

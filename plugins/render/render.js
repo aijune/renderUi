@@ -18,7 +18,7 @@ var Sel = {
     cache: {},
 
     compile: function(selector) {
-        var match, widget, tag = "", classes = [], data = {};
+        var match, tag = "div", classes = [], data = {};
 
         if(selector && (match = this.cache[selector])){
             return match;
@@ -27,6 +27,8 @@ var Sel = {
         while (match = this.parser.exec(selector)){
             var type = match[1], value = match[2];
             if (type === "" && value !== "") {
+                tag = value;
+                /*
                 tag = value.split(":");
                 if(tag[1]){
                     widget = tag[0];
@@ -39,6 +41,7 @@ var Sel = {
                 else{
                     tag = tag[0];
                 }
+                */
             }
             else if (type === "#") data.id = value;
             else if (type === ".") classes.push(value);
@@ -51,7 +54,7 @@ var Sel = {
         }
 
         if (classes.length > 0) data.class = classes.join(" ");
-        return this.cache[selector] = {widget: widget, tag: tag, data: data}
+        return this.cache[selector] = {tag: tag, data: data};
     }
 };
 
@@ -59,7 +62,7 @@ var Sel = {
 
 var Raw = function (data, render, parent, node) {
 
-    var sel, added;
+    var sel, added, name;
 
     this.render = render;
     this.parent = parent;
@@ -68,16 +71,29 @@ var Raw = function (data, render, parent, node) {
 
     sel = Sel.compile(this.selector);
     this.tag = sel.tag;
-    this.widget = sel.widget;
+
+    if(this.tag === "render"){
+        return this.setRender({
+            name: sel.data.name,
+            data: data[1]
+        });
+    }
+
+    if(this.tag === "slot"){
+        return this.setSlot({
+            name: sel.data.name,
+            handle: data[1]
+        });
+    }
 
     added = this.getAdded(data.slice(1));
     added.data = $.widget.extend({}, this.transClassStyle(sel.data), this.transClassStyle(added.data));
 
-    if(this.widget){
-        if(!$.widgets[this.widget]){
-            $.error("Widget error: " + this.selector);
-        }
-        return this.setWidget(this.widget, added);
+
+
+
+    if(this.tag === "widget"){
+        return this.setWidget(added);
     }
 
     this.setData(added.data);
@@ -175,13 +191,72 @@ Raw.prototype = {
         }
     },
 
-    setWidget: function(name, added){
+    setRender: function(added) {
+        var that = this;
+        var name = added.name;
+        var data = added.data;
+        var widget = this.render.widget;
+        var args = [this.render.options, widget];
+        var renders = widget.renders || {};
+        var render;
 
+        if(!name || !(render = renders[name])){
+            $.error("Render error: " + this.selector);
+        }
+
+        if($.isArray(data)){
+            $.each(data, function (i, item) {
+                that.setRenderItem(render, [item, i].concat(args));
+            });
+        }
+        else{
+            if(data){
+                args = [data].concat(args);
+            }
+            this.setRenderItem(render, args);
+        }
+    },
+
+    setRenderItem: function(render, args){
+        var result = render.apply(this.render.widget, args);
+        var raw;
+        if($.isArray(result[0])){
+            result = ["div", result];
+        }
+        raw = new Raw(result, this.render, this);
+        this.parent.children.push(raw);
+    },
+
+    setSlot: function(added){
+        var name = added.name;
+        var handle = added.handle || function(){};
+        var widget = this.render.widget;
+        var slots = widget.options.slots || {};
+        var slot, result;
+
+        if(!name && !(slot = slots[name])){
+            $.error("Slot error: " + this.selector);
+        }
+
+        result = handle.call(widget, slot, this.render.options, widget);
+        if($.isArray(result[0])){
+            result = ["div", result];
+        }
+        raw = new Raw(result, this.render, this);
+        this.parent.children.push(raw);
+    },
+
+    setWidget: function(added){
         var that = this;
         var toString = Object.prototype.toString;
+        var name = added.data.name;
         var slots = {
             default: {}
         };
+
+        if(!name || !$.widgets[name]){
+            $.error("Widget error: " + this.selector);
+        }
 
         if(added.data){
             $.each(added.data, function (key, value) {
@@ -203,7 +278,7 @@ Raw.prototype = {
         if(added.children){
             $.each(added.children, function (i, child) {
                 var match, added;
-                if($.isArray(child) && (match = child[0].match(/^slot#(\w+)$/))){
+                if($.isArray(child) && (match = child[0].match(/^slot\[name=(\w+)\]$/))){
                     added = that.getAdded(child.slice(1));
                     slots[match[1]] = added;
                 }
@@ -232,6 +307,7 @@ Raw.prototype = {
             });
         });
 
+        this.tag = added.data.tag || $.widgets[name]["prototype"]["defaultTag"];
         this.children = [];
         this.text = "";
         this.data = {
@@ -321,13 +397,14 @@ Raw.prototype = {
                 item = ["span", item];
             }
             child = new Raw(item, that.render, that);
-            that.children.push(child);
+            if($.inArray(child.tag, ["render", "slot"]) < 0){
+                that.children.push(child);
+            }
         });
     },
 
     addNS: function(data, children){
         data.ns = "http://www.w3.org/2000/svg";
-
         $.each(children, function (i, child){
             child.addNS(child.data, child.children);
         });
@@ -1039,7 +1116,7 @@ Render.prototype = {
         }
 
         if($.isArray(data[0])){
-            data = ["", data];
+            data = ["div", data];
         }
 
         this.raw = data.length ? new Raw(data, this) : null;
@@ -1274,7 +1351,11 @@ if($.Widget){
 
     $.extend($.Widget.prototype, {
 
+        renders: {},
+
         _render: function (element, options, render) {
+            var widget = this;
+            var value;
 
             if (!element.jquery) {
                 return this._render.apply(this, [this.element].concat(slice.call(arguments)));
@@ -1286,30 +1367,23 @@ if($.Widget){
 
             if($.isFunction(options)){
                 render = options;
-                options = undefined;
+                options = this.options;
+            }
+            else if(value = options["render"]){
+                render = typeof value === "string" ? this.renders[value] : value;
+                if(!render){
+                    $.error("Render " + value + " is not exist.");
+                }
+                options = options.options || this.options;
+                widget = options.widget || this;
             }
 
             element.render({
                 render: render,
-                options: options || this.options,
-                widget: this
+                options: options,
+                widget: widget
             });
-        },
-
-        _slot: function(name){
-            var slot;
-
-            name = name.split(":");
-            slot = this.options.slots[name[0]];
-
-            if(!slot){
-                return name[1] === "data" ? {} : undefined;
-            }
-            else{
-                return name[1] === "data" ? (slot.data || {}) : (slot.children || slot.text);
-            }
         }
-
     });
 
 }
