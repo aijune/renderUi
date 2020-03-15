@@ -28,20 +28,6 @@ var Sel = {
             var type = match[1], value = match[2];
             if (type === "" && value !== "") {
                 tag = value;
-                /*
-                tag = value.split(":");
-                if(tag[1]){
-                    widget = tag[0];
-                    tag = tag[1];
-                }
-                else if(tag[0].match(/^([A-Z]).+/)){
-                    widget = tag[0];
-                    tag = $.widgets[widget] && $.widgets[widget]["prototype"]["defaultTag"] || "div";
-                }
-                else{
-                    tag = tag[0];
-                }
-                */
             }
             else if (type === "#") data.id = value;
             else if (type === ".") classes.push(value);
@@ -62,11 +48,14 @@ var Sel = {
 
 var Raw = function (data, render, parent, node) {
 
-    var sel, added, name;
+    var sel, added;
 
     this.render = render;
     this.parent = parent;
     this.node = node;
+    this.options = parent ? parent.options : render.options;
+    this.r = parent ? parent.r : render.render;
+    this.args = parent ? parent.args : [render.options, render.widget];
     this.selector = data[0];
 
     sel = Sel.compile(this.selector);
@@ -220,10 +209,16 @@ Raw.prototype = {
     setRenderItem: function(render, args){
         var result = render.apply(this.render.widget, args);
         var raw;
+
         if($.isArray(result[0])){
             result = ["div", result];
         }
+        this.options = args[0];
+        this.r = render;
+        this.args = args;
         raw = new Raw(result, this.render, this);
+        raw.parent = this.parent;
+
         this.parent.children.push(raw);
     },
 
@@ -243,6 +238,8 @@ Raw.prototype = {
             result = ["div", result];
         }
         raw = new Raw(result, this.render, this);
+        raw.parent = this.parent;
+
         this.parent.children.push(raw);
     },
 
@@ -360,7 +357,7 @@ Raw.prototype = {
 
         var that = this;
         var args = [];
-        var key = this.data[key] = {};
+        var o = this.data[key] = {};
 
         $.each(value, function (k, v) {
 
@@ -370,7 +367,7 @@ Raw.prototype = {
             }
 
             if($.isFunction(v)){
-                key[k] = function () {
+                o[k] = function () {
                     return v.apply(that.render.widget, args.concat(slice.call(arguments, 0)));
                 };
             }
@@ -408,6 +405,43 @@ Raw.prototype = {
         $.each(children, function (i, child){
             child.addNS(child.data, child.children);
         });
+    },
+
+    update: function(value){
+        var that = this;
+        var delay, result, raw;
+
+        if($.isFunction(value)){
+            value.call(that, this.options);
+        }
+        else{
+            $.widget.extend(this.options, value);
+        }
+
+        if(!this.updating){
+            this.updating = true;
+            delay = window.requestAnimationFrame || window.setTimeout;
+            delay(function () {
+                that.updating = false;
+                result = that.r.apply(that.render.widget, that.args);
+                if($.isArray(result[0])){
+                    result = ["div", result];
+                }
+
+                raw = new Raw(result, that.render, that);
+                that.render.diff.patch(that.rTopRaw(), raw);
+            });
+        }
+    },
+
+    rTopRaw: function () {
+        var p = this;
+        var r;
+        while(p.r === this.r){
+            r = p;
+            p = p.parent;
+        }
+        return r;
     }
 };
 
@@ -498,10 +532,15 @@ Diff.prototype = {
         this.updateBase(oldRaw, raw, "style", {
 
             add: function(node, key, value){
+                var args = [];
+
+                if($.isArray(value)){
+                    args = value;
+                    value = args.shift();
+                }
 
                 if($.isFunction(value)){
-                    console.log(key);
-                    value = value.call(raw.render.widget, raw, oldRaw);
+                    value = value.apply(raw.render.widget, args.concat([raw, oldRaw]));
                 }
 
                 $(node).css(key, value);
@@ -1116,7 +1155,7 @@ Render.prototype = {
         }
 
         if($.isArray(data[0])){
-            data = ["div", data];
+            data = ["this", data];
         }
 
         this.raw = data.length ? new Raw(data, this) : null;
@@ -1130,7 +1169,6 @@ Render.prototype = {
 
             if(!this.raw.widget){
                 this.raw.tag = element.prop("tagName").toLowerCase();
-                //this.raw.selector = this.raw.tag + this.raw.selector;
             }
 
             if(!this.defaultRaw){
@@ -1355,9 +1393,9 @@ if($.Widget){
 
         _render: function (element, options, render) {
             var widget = this;
-            var value;
+            var value, isObject;
 
-            if (!element.jquery) {
+            if (!element || !element.jquery) {
                 return this._render.apply(this, [this.element].concat(slice.call(arguments)));
             }
 
@@ -1369,13 +1407,15 @@ if($.Widget){
                 render = options;
                 options = this.options;
             }
-            else if(value = options["render"]){
+            else{
+                isObject = typeof options === "object";
+                value = isObject ? options["render"] : "main";
                 render = typeof value === "string" ? this.renders[value] : value;
                 if(!render){
                     $.error("Render " + value + " is not exist.");
                 }
-                options = options.options || this.options;
-                widget = options.widget || this;
+                options = isObject ? (options.options || this.options) : this.options;
+                widget = isObject ? (options.widget || this) : this;
             }
 
             element.render({

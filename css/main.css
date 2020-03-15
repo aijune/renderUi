@@ -1,3 +1,43 @@
+.menu{
+    padding-left: 0;
+    list-style: none;
+}
+.menu-a{
+    display: block;
+    background-color: #343a40;
+    color: #fff;
+    padding: 0 15px;
+    height: 44px;
+    line-height: 44px;
+    text-indent: 35px;
+    overflow: hidden;
+}
+.menu .fa{
+    text-indent: -35px;
+    font-size: 1.25rem;
+}
+.menu span + .fa{
+    float: right;
+    line-height: 44px;
+    text-indent: 0;
+    transition: transform 0.35s;
+}
+.menu ul.menu{
+    overflow: hidden;
+    transition: height 0.35s;
+}
+.menu li.extend ul.menu{
+    display: block;
+}
+.menu li.extend span + .fa{
+    transform: rotate(180deg);
+}
+
+/*----------*/
+
+html{
+    font-size: 14px;
+}
 .layout{
     display: flex;
     flex-direction: column;
@@ -12,6 +52,9 @@
     font-weight: bold;
     font-size: 1.2rem;
 }
+.layout-brand:hover{
+    color: #fff;
+}
 .layout-brand .toggle{
     display: block;
     height: 50px;
@@ -19,10 +62,10 @@
     text-align: center;
     transition: width 0.35s ease-in-out;
 }
-.layout-brand .max{
+.layout-brand .toggle.max{
     width: 230px;
 }
-.layout-brand .min{
+.layout-brand .toggle.min{
     width: 50px;
 }
 .layout-topbar{
@@ -30,7 +73,6 @@
     flex-grow: 1;
     align-items: center;
     background-color: #343a40;
-    font-size: 1.2rem;
 }
 .layout-topbar .toggle{
     display: block;
@@ -57,7 +99,7 @@
     left: auto;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
-.layout-main{
+.layout-body{
     display: flex;
 }
 .layout-aside{
@@ -65,34 +107,11 @@
     transition: width 0.35s ease-in-out;
 
 }
-.layout-aside .max{
+.layout-aside.max{
     width: 230px;
 }
-.layout-aside .min{
+.layout-aside.min{
     width: 50px;
-}
-.layout-aside .menu {
-    padding-left: 0;
-    list-style: none;
-}
-.layout-aside .menu-a{
-    display: block;
-    background-color: #343a40;
-    color: #fff;
-    padding: 0 15px;
-    height: 44px;
-    line-height: 44px;
-    text-indent: 35px;
-    overflow: hidden;
-}
-.layout-aside .fa{
-    text-indent: -35px;
-    font-size: 1.25rem;
-}
-.layout-aside span + .fa{
-    .float-right;
-    line-height: 44px;
-    text-indent: 0;
 }
 .layout-article{
     display: flex;
