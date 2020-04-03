@@ -2,7 +2,7 @@
     padding-left: 0;
     list-style: none;
 }
-.menu-a{
+.menu-item a{
     display: block;
     background-color: #343a40;
     color: #fff;
@@ -11,6 +11,9 @@
     line-height: 44px;
     text-indent: 35px;
     overflow: hidden;
+}
+.menu-item a:hover{
+    color: #fff;
 }
 .menu .fa{
     text-indent: -35px;
@@ -22,14 +25,14 @@
     text-indent: 0;
     transition: transform 0.35s;
 }
-.menu ul.menu{
+.menu .menu{
     overflow: hidden;
     transition: height 0.35s;
 }
-.menu li.extend ul.menu{
+.menu .extend .menu{
     display: block;
 }
-.menu li.extend span + .fa{
+.menu .extend span + .fa{
     transform: rotate(180deg);
 }
 

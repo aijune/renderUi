@@ -22,12 +22,12 @@ define(["jquery", "bootstrap", "render"], function ($) {
                 ];
             },
             item: function(item, i, o, w){
-                return ["li", {
+                return ["li.menu-item", {
                     class: {
                         extend: {init: item.extend && "add"}
                     }
                 }, [
-                    ["a.menu-a", {
+                    ["a", {
                         href: item.href,
                         onclick: item.subs ? w._toggle : undefined
                     }, [
@@ -45,10 +45,15 @@ define(["jquery", "bootstrap", "render"], function ($) {
                 ]];
             },
             sub: function(sub){
-                return  ["li", [
-                    ["a.menu-a", {href: sub.href}, ["span", sub.title]]
+                return  ["li.menu-item", [
+                    ["a", {href: sub.href}, ["span", sub.title]]
                 ]];
             }
+        },
+        _create: function(){
+            this._on({
+
+            });
         },
         _init: function () {
             this._render();
