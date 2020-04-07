@@ -9,6 +9,9 @@ define(["jquery"], function ($) {
         this.routers = o.routers;
         this.path = o.path || "";
 
+        this.stack = [];
+        this.activeIndex = 0;
+
         this._init();
         setTimeout(() => {
             if(!this.parent){
@@ -109,6 +112,11 @@ define(["jquery"], function ($) {
                     }
                 });
             }
+        },
+
+        push: function (path, data) {
+
+            console.log(path, data);
         }
     };
 
@@ -118,15 +126,15 @@ define(["jquery"], function ($) {
         return router = new Router(o);
     };
 
-    $.router.push = function (o) {
-        router.push(o);
+    $.router.push = function () {
+        router.push.apply(router, arguments);
     };
 
     $.router.go = function (n) {
         router.go(n);
     };
 
-    $.router.replace = function (o) {
-        router.replace(o);
+    $.router.replace = function () {
+        router.replace.apply(router, arguments);
     };
 });
