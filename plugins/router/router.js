@@ -3,21 +3,21 @@ define(["jquery"], function ($) {
     var Router = function (o) {
         o = o || {};
 
+        this.base = o.base || "";
         this.mode = o.mode || "hash";
-        this.filter = o.filter;
-        this.routes = o.routes;
-        this.routers = o.routers;
-        this.path = o.path || "";
+        this.layout = o.layout || "";
+        this.routes = o.routes || {};
 
         this.stack = [];
         this.activeIndex = 0;
 
+        /*
+        this.path = o.path || "";
+
+
+        */
+
         this._init();
-        setTimeout(() => {
-            if(!this.parent){
-                this._run();
-            }
-        });
     };
 
     Router.prototype = {
@@ -27,45 +27,45 @@ define(["jquery"], function ($) {
         ENS: ".router",
 
         _init: function () {
-            $.each(this.routers, function (i, router) {
-                router.parent = this;
-            });
-        },
-
-        _run: function(){
-            if(this.mode === "hash"){
-                this._hash();
-            }
-            else if(this.mode === "history"){
-                this._history();
+            switch (this.mode) {
+                case "hash":
+                    this._hash();
+                    break;
+                case "history":
+                    this._history();
+                    break;
             }
         },
 
         _hash: function(){
-
             var that = this;
 
             $(window).on("hashchange", function () {
-                that._match(that._setHash(location.hash));
-            });
-
-            $(document).on("click" + this.ENS, "a[href]", function (e) {
-                e.preventDefault();
-                location.hash = "#" + $(e.currentTarget).attr("href");
+                that._setHash();
             });
 
             $(function () {
-                that._match(that._setHash(location.hash));
-            })
+                that._setHash();
+            });
         },
 
-        _setHash: function(hash){
-            if(!hash){
-                location.hash = "#/";
+        _setHash: function(){
+            var path = (location.hash || "#").substring(1);
+            if(path){
+                this._setPath(path, {});
+                this._match();
             }
             else{
-                return hash.substring(1);
+                location.hash = "#/";
             }
+        },
+
+        _setPath: function(path, data){
+            this.stack.push({
+                path: path,
+                data: data
+            });
+            this.activeIndex = this.stack.length -1;
         },
 
         _history: function () {
@@ -115,8 +115,10 @@ define(["jquery"], function ($) {
         },
 
         push: function (path, data) {
-
-            console.log(path, data);
+            this.stack.push({
+                path: path,
+                data: data
+            });
         }
     };
 
