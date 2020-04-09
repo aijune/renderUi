@@ -1,4 +1,4 @@
-define(["jquery"], function ($) {
+define(["jquery", "navigate"], function ($) {
 
     var Router = function (o) {
         o = o || {};
