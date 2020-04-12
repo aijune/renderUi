@@ -1,37 +1,45 @@
 require(["jquery", "router", "widgets/layout"], function($){
-
     $.router({
-        routes: [
-            {
-                path: "/",
-                render: function () {
-                    console.log("/");
+        mode: "hash",
+        base: "/renderUi",
+        routes: {
+            "*": function () {
+                this.redirect("/");
+            },
+            "/": function(){
+                this.redirect("/user/login");
+            },
+            "/user": {
+                layout: "user",
+                routes: {
+                    "/login": function (elem) {
+                        $(elem).login();
+                    },
+                    "/logout": function (elem) {
+                        $(elem).logout();
+                    },
+                    "/sign": function (elem) {
+                        $(elem).sign();
+                    }
                 }
             },
-            {
-                path: "/forms",
-                render: function () {
-                    console.log("/forms");
-                }
-            },
-            {
-                path: "/dropdowns",
-                render: function () {
-                    console.log("/dropdowns");
-                }
-            },
-            {
-                path: "/buttons",
-                render: function () {
-                    console.log("/buttons");
-                }
-            },
-            {
-                path: "/icons",
-                render: function () {
-                    console.log("/icons");
+            "/center": {
+                layout: "center",
+                routes: {
+                    "/forms": function (elem) {
+                        $(elem).forms();
+                    },
+                    "/dropdowns": function (elem) {
+                        $(elem).dropdowns();
+                    },
+                    "/buttons": function (elem) {
+                        $(elem).buttons();
+                    },
+                    "/icons": function (elem) {
+                        $(elem).icons();
+                    }
                 }
             }
-        ]
+        }
     });
 });

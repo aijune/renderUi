@@ -3327,7 +3327,7 @@
 // The current version exposes the following virtual events to jQuery bind methods:
 // "vmouseover vmousedown vmousemove vmouseup vclick vmouseout vmousecancel"
 
-    (function( $, window, document, undefined ) {
+    /*(function( $, window, document, undefined ) {
 
         var dataPropertyName = "virtualMouseBindings",
             touchTargetPropertyName = "virtualTouchID",
@@ -3640,7 +3640,7 @@
             var realType = eventType.substr( 1 );
 
             return {
-                setup: function(/* data, namespace */) {
+                setup: function(/!* data, namespace *!/) {
                     // If this is the first virtual mouse binding for this element,
                     // add a bindings object to its data.
 
@@ -3695,7 +3695,7 @@
                     }
                 },
 
-                teardown: function(/* data, namespace */) {
+                teardown: function(/!* data, namespace *!/) {
                     // If this is the last virtual binding for this eventType,
                     // remove its global handler from the document.
 
@@ -3813,7 +3813,7 @@
                 }
             }, true);
         }
-    })( jQuery, window, document );
+    })( jQuery, window, document );*/
 
 
     (function( $, window, undefined ) {

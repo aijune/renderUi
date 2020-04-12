@@ -3,7 +3,6 @@ require(["jquery", "widgets/layout", "jquerymobile"], function($){
 
 
 
-
     $("#layout").render(function () {
         return ["widget[name=layout]"];
     });
