@@ -1,45 +1,17 @@
-require(["jquery", "widgets/layout", "jquerymobile"], function($){
-
-
-
+require(["jquery", "routes", "widgets/layout"], function($){
 
     $("#layout").render(function () {
         return ["widget[name=layout]"];
     });
 
-    $("#layout")[0].onclick = function (e) {
-        console.log(111);
-    };
+    // Change our States
+    $.history.pushState({state:1}, "State 1", "/aaa?state=1"); // logs {state:1}, "State 1", "?state=1"
+    $.history.pushState({state:2}, "State 2", "/aaa/bbb?state=2"); // logs {state:2}, "State 2", "?state=2"
+    $.history.replaceState({state:3}, "State 3", "/aaa/bbb/ccc?state=3"); // logs {state:3}, "State 3", "?state=3"
+    $.history.pushState(null, null, "/aaa/bbb/ccc/ddd?state=4"); // logs {}, '', "?state=4"
+    $.history.back(); // logs {state:3}, "State 3", "?state=3"
+    $.history.back(); // logs {state:1}, "State 1", "?state=1"
+    $.history.back(); // logs {}, "Home Page", "?"
+    $.history.go(2); // logs {state:3}, "State 3", "?state=3"
 
-    $("body")[0].onclick = function (e) {
-        console.log(222);
-    };
-    $(document)[0].onclick = function (e) {
-        console.log(333);
-    };
-
-    $("#layout")[0].click();
-
-    $("#layout").trigger("click");
-    $("#layout").trigger("click");
-
-
-
-    /* $.mobile.navigate( "#foo", { info: "info about the #foo hash" });
-
-
-     $.mobile.navigate( "#bar" );
-
-     $( window ).on( "navigate", function( event, data ) {
-         console.log( event, data );
-     });
-
-
-
-
-
-
-
-     window.history.back();
- */
 });

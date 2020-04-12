@@ -3,7 +3,7 @@ requirejs = {
     urlArgs: "v=20200220",
     paths: {
         jquery: "../plugins/jquery/jquery",
-        navigate: "../plugins/jquery/navigate",
+        history: "../plugins/history/history",
         router: "../plugins/router/router",
         popper: "../plugins/popper/popper",
         bootstrap: "../plugins/bootstrap/bootstrap",

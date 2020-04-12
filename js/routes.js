@@ -1,7 +1,7 @@
-require(["jquery", "router", "widgets/layout"], function($){
+define(["jquery", "router", "widgets/layout"], function($){
+
     $.router({
         mode: "hash",
-        base: "/renderUi",
         routes: {
             "*": function () {
                 this.redirect("/");

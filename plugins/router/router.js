@@ -1,21 +1,11 @@
-define(["jquery", "navigate"], function ($) {
+define(["jquery", "history"], function ($) {
 
     var Router = function (o) {
         o = o || {};
 
-        this.base = o.base || "";
-        this.mode = o.mode || "hash";
+        this.mode = o.mode || "history";
         this.layout = o.layout || "";
         this.routes = o.routes || {};
-
-        this.stack = [];
-        this.activeIndex = 0;
-
-        /*
-        this.path = o.path || "";
-
-
-        */
 
         this._init();
     };
@@ -24,72 +14,25 @@ define(["jquery", "navigate"], function ($) {
 
         constructor: Router,
 
-        ENS: ".router",
-
         _init: function () {
-            switch (this.mode) {
-                case "hash":
-                    this._hash();
-                    break;
-                case "history":
-                    this._history();
-                    break;
-            }
-        },
-
-        _hash: function(){
-            var that = this;
-
-            $(window).on("hashchange", function () {
-                that._setHash();
-            });
-
-            $(function () {
-                that._setHash();
-            });
-        },
-
-        _setHash: function(){
-            var path = (location.hash || "#").substring(1);
-            if(path){
-                this._setPath(path, {});
-                this._match();
-            }
-            else{
-                location.hash = "#/";
-            }
-        },
-
-        _setPath: function(path, data){
-            this.stack.push({
-                path: path,
-                data: data
-            });
-            this.activeIndex = this.stack.length -1;
-        },
-
-        _history: function () {
 
             var that = this;
 
-            $(window).on("popstate", function () {
-                that._match(location.pathname);
+            $.history.init({
+                html4Mode: this.mode === "hash" ? true : false
             });
 
-            $(document).on("click" + this.ENS, "a[href]", function (e) {
-                e.preventDefault();
-                history.pushState(null, "", $(e.target).attr("href"));
-                that._match(location.pathname);
-            });
-
-            $(function () {
-                that._match(location.pathname);
+            $.history.Adapter.bind(window, "statechange", function(){
+                that._match($.history.getState());
             });
         },
 
-        _match: function (path) {
+        _match: function (state) {
             var that = this;
             var next = true;
+            var path = state.hash;
+
+            console.log(path);
 
             if(this.filter && this.filter.call(this) === false){
                 return;
@@ -112,31 +55,10 @@ define(["jquery", "navigate"], function ($) {
                     }
                 });
             }
-        },
-
-        push: function (path, data) {
-            this.stack.push({
-                path: path,
-                data: data
-            });
         }
     };
 
-    var router;
-
     $.router = function (o) {
-        return router = new Router(o);
-    };
-
-    $.router.push = function () {
-        router.push.apply(router, arguments);
-    };
-
-    $.router.go = function (n) {
-        router.go(n);
-    };
-
-    $.router.replace = function () {
-        router.replace.apply(router, arguments);
+        return new Router(o);
     };
 });
