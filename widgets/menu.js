@@ -29,7 +29,7 @@ define(["jquery", "bootstrap", "render"], function ($) {
                 }, [
                     ["a", {
                         href: item.href,
-                        onclick: item.subs ? w._toggle : undefined
+                        onclick: item.subs ? w._toggle : [w._link, item]
                     }, [
                         ["i" + item.icon],
                         ["span", item.title],
@@ -44,15 +44,20 @@ define(["jquery", "bootstrap", "render"], function ($) {
                     ]
                 ]];
             },
-            sub: function(sub){
+            sub: function(item, i, o, w){
                 return  ["li.menu-item", [
-                    ["a", {href: sub.href}, ["span", sub.title]]
+                    ["a", {
+                        href: item.href,
+                        onclick: [w._link, item]
+                    }, ["span", item.title]]
                 ]];
             }
         },
         _create: function(){
-            this._on({
-
+            this._on(this.window, {
+                "navigate": function (e, data) {
+                    console.log(data);
+                }
             });
         },
         _init: function () {
@@ -62,6 +67,10 @@ define(["jquery", "bootstrap", "render"], function ($) {
             raw.update(function (o) {
                 o.extend = !o.extend;
             });
+        },
+        _link: function(item, e){
+            console.log("#" + item.href)
+            $.mobile.navigate("/renderUi/index.html#" + item.href, item);
         },
         _height: function (item, raw) {
             if(!item.extend){
