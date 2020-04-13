@@ -4,8 +4,14 @@ define(["jquery", "history"], function ($) {
         o = o || {};
 
         this.mode = o.mode || "history";
-        this.layout = o.layout || "";
+        this.error = o.error || function () {};
+        this.layout = o.layout;
         this.routes = o.routes || {};
+        this.view = $(".router-view");
+        this.path = "";
+        this.paths = [];
+        this.prevPaths = [];
+        this.count = -1;
 
         this._init();
     };
@@ -15,7 +21,6 @@ define(["jquery", "history"], function ($) {
         constructor: Router,
 
         _init: function () {
-
             var that = this;
 
             $.history.init({
@@ -23,38 +28,59 @@ define(["jquery", "history"], function ($) {
             });
 
             $.history.Adapter.bind(window, "statechange", function(){
-                that._match($.history.getState());
+                that.state = $.history.getState();
+                that._match(that.state.hash, that);
             });
+
+            $.history.pushState({}, null, "/");
         },
 
-        _match: function (state) {
-            var that = this;
-            var next = true;
-            var path = state.hash;
+        _match: function (path, router) {
+            var handler, view, prevPath;
 
-            console.log(path);
+            this.count++;
+            prevPath = this.prevPaths[this.count] || {};
 
-            if(this.filter && this.filter.call(this) === false){
-                return;
+            if($.isFunction(router.layout)){
+                if(router.path !== prevPath.path){
+                    router.layout.call(this, router.view, this.state);
+                    view = router.view.find(".router-view");
+                }
+                else{
+                    view = prevPath.view;
+                }
             }
 
-            $.each(this.routes, function (i, route) {
-                if(that.path + route.path === path){
-                    if(!route.filter || route.filter.call(this) !== false){
-                        route.render();
-                    }
-                    return next = false;
+            this.paths.push({
+                path: router.path,
+                view: view
+            });
+
+            $.each(router.routes, function (key, route) {
+                if(path === key){
+                    handler = route;
+                    return  false;
+                }
+                else if(path.indexOf(key) === 0){
+                    handler = route;
+                    handler.path = key;
                 }
             });
 
-            if(next){
-                $.each(this.routers, function (i, router) {
-                    if(path.indexOf(router.path) === 0){
-                        router._match(path.substring(router.path.length));
-                        return false;
-                    }
-                });
+            if($.isFunction(handler)){
+                handler.call(this, view, this.state);
             }
+            else if(handler && handler.routes){
+                handler.view = view || router.view;
+                return this._math(path.substring(handler.path.length), handler);
+            }
+            else{
+                this.error.call(this, this.view, this.state);
+            }
+
+            this.count = -1;
+            this.prevPaths = this.paths;
+            this.paths = [];
         }
     };
 

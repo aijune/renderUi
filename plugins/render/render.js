@@ -78,9 +78,6 @@ var Raw = function (data, render, parent, node) {
     added = this.getAdded(data.slice(1));
     added.data = $.widget.extend({}, this.transClassStyle(sel.data), this.transClassStyle(added.data));
 
-
-
-
     if(this.tag === "widget"){
         return this.setWidget(added);
     }

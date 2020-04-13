@@ -54,23 +54,20 @@ define(["jquery", "bootstrap", "render"], function ($) {
             }
         },
         _create: function(){
-            this._on(this.window, {
-                "navigate": function (e, data) {
-                    console.log(data);
-                }
-            });
+
         },
         _init: function () {
             this._render();
         },
         _toggle: function (e, raw) {
+            e.preventDefault();
             raw.update(function (o) {
                 o.extend = !o.extend;
             });
         },
         _link: function(item, e){
-            console.log("#" + item.href)
-            $.mobile.navigate("/renderUi/index.html#" + item.href, item);
+            e.preventDefault();
+            $.history.pushState(item, item.title, item.href);
         },
         _height: function (item, raw) {
             if(!item.extend){

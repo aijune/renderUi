@@ -2,43 +2,30 @@ define(["jquery", "router", "widgets/layout"], function($){
 
     $.router({
         mode: "hash",
+        layout: function(view, state){
+            view.render(function () {
+                return ["widget[name=layout]"];
+            });
+        },
         routes: {
-            "*": function () {
-                this.redirect("/");
+            "/": function (view, state) {
+                view.html(111);
             },
-            "/": function(){
-                this.redirect("/user/login");
+            "/forms": function (view, state) {
+                view.html(222);
+                //view.forms();
             },
-            "/user": {
-                layout: "user",
-                routes: {
-                    "/login": function (elem) {
-                        $(elem).login();
-                    },
-                    "/logout": function (elem) {
-                        $(elem).logout();
-                    },
-                    "/sign": function (elem) {
-                        $(elem).sign();
-                    }
-                }
+            "/dropdowns": function (view, state) {
+                view.html(333);
+                //view.dropdowns();
             },
-            "/center": {
-                layout: "center",
-                routes: {
-                    "/forms": function (elem) {
-                        $(elem).forms();
-                    },
-                    "/dropdowns": function (elem) {
-                        $(elem).dropdowns();
-                    },
-                    "/buttons": function (elem) {
-                        $(elem).buttons();
-                    },
-                    "/icons": function (elem) {
-                        $(elem).icons();
-                    }
-                }
+            "/buttons": function (view, state) {
+                view.html(444);
+                //view.buttons();
+            },
+            "/icons": function (view, state) {
+                view.html(555);
+                //view.icons();
             }
         }
     });

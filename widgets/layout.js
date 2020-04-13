@@ -62,7 +62,7 @@ define(["jquery", "bootstrap", "render", "widgets/menu"], function ($) {
             body: function (o, w) {
                 return ["main.layout-body", [
                     ["render[name=aside]"],
-                    ["article"]
+                    ["article.router-view"]
                 ]];
             },
             brand: function(o, w){
