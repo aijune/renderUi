@@ -13,8 +13,6 @@ define(["jquery", "navigate"], function ($) {
 
         /*
         this.path = o.path || "";
-
-
         */
 
         this._init();
@@ -38,6 +36,7 @@ define(["jquery", "navigate"], function ($) {
         },
 
         _hash: function(){
+
             var that = this;
 
             $(window).on("hashchange", function () {
