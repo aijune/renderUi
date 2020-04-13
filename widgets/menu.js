@@ -44,17 +44,21 @@ define(["jquery", "bootstrap", "render"], function ($) {
                     ]
                 ]];
             },
-            sub: function(sub, i, o, w){
+            sub: function(item, i, o, w){
                 return  ["li.menu-item", [
                     ["a", {
-                        href: "#",
-                        onclick: [w._link, sub]
-                    }, ["span", sub.title]]
+                        href: item.href,
+                        onclick: [w._link, item]
+                    }, ["span", item.title]]
                 ]];
             }
         },
         _create: function(){
-            this._on({});
+            this._on(this.window, {
+                "navigate": function (e, data) {
+                    console.log(data);
+                }
+            });
         },
         _init: function () {
             this._render();
@@ -65,8 +69,8 @@ define(["jquery", "bootstrap", "render"], function ($) {
             });
         },
         _link: function(item, e){
-            e.preventDefault();
-            $.router.push(item.href, item);
+            console.log("#" + item.href)
+            $.mobile.navigate("/renderUi/index.html#" + item.href, item);
         },
         _height: function (item, raw) {
             if(!item.extend){
