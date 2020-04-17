@@ -5,6 +5,7 @@ requirejs = {
         jquery: "../plugins/jquery/jquery",
         history: "../plugins/history/history",
         router: "../plugins/router/router",
+        mobiscroll: "../plugins/mobiscroll/js/a",
         popper: "../plugins/popper/popper",
         bootstrap: "../plugins/bootstrap/bootstrap",
         widget: "../plugins/widget/widget",

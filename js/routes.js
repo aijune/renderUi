@@ -1,19 +1,25 @@
-define(["jquery", "router", "widgets/layout"], function($){
+define(["config", "jquery", "router", "widgets/layout"], function(config, $){
 
     $.router({
+
         mode: "hash",
+
         layout: function(view, state){
             view.render(function () {
-                return ["widget[name=layout]"];
+                return ["widget[name=layout]", config.layout];
             });
         },
+
         routes: {
             "/": function (view, state) {
-                view.html(111);
+                require(["pagewelcome"], function () {
+                    view.pagewelcome();
+                });
             },
             "/forms": function (view, state) {
-                view.html(222);
-                //view.forms();
+                require(["pageforms"], function () {
+                    view.pageforms();
+                });
             },
             "/dropdowns": function (view, state) {
                 view.html(333);

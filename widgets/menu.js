@@ -3,17 +3,7 @@ define(["jquery", "bootstrap", "render"], function ($) {
     $.widget("menu", {
         defaultTag: "ul",
         options: {
-            items: [
-                /*
-                {href: "#", icon: ".fa.fa-dashboard", title: "仪表盘"},
-                {href: "#", icon: ".fa.fa-object-group", title: "组件", extend: false, subs: [
-                    {href: "#/forms", title: "Form 表单"},
-                    {href: "#/dropdowns", title: "Dropdown 下拉"},
-                    {href: "#/buttons", title: "Button 按钮"},
-                    {href: "#/icons", title: "Icon 图标"}
-                ]}
-                */
-            ]
+            items: []
         },
         renders: {
             main: function (o, w) {
@@ -53,9 +43,6 @@ define(["jquery", "bootstrap", "render"], function ($) {
                 ]];
             }
         },
-        _create: function(){
-
-        },
         _init: function () {
             this._render();
         },
@@ -65,9 +52,13 @@ define(["jquery", "bootstrap", "render"], function ($) {
                 o.extend = !o.extend;
             });
         },
-        _link: function(item, e){
-            e.preventDefault();
-            $.history.pushState(item, item.title, item.href);
+        _link: function(item, e, raw){
+            $.router.go({
+                url: item.href,
+                title: item.title,
+                data: item,
+                event: e
+            });
         },
         _height: function (item, raw) {
             if(!item.extend){

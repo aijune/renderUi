@@ -81,10 +81,23 @@ define(["jquery", "history"], function ($) {
             this.count = -1;
             this.prevPaths = this.paths;
             this.paths = [];
+        },
+
+        go: function (o) {
+            if(this.mode !== "backend"){
+                o.event && o.event.preventDefault();
+                $.history.pushState(o.data || {}, o.title || "", o.url || "");
+            }
         }
     };
 
+    var router;
+
     $.router = function (o) {
-        return new Router(o);
+        return router = new Router(o);
+    };
+
+    $.router.go = function (o) {
+        router.go(o);
     };
 });
