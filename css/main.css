@@ -130,4 +130,5 @@ html{
 }
 .layout-content{
     padding: 1rem;
+    overflow-x: hidden;
 }

@@ -1,13 +1,9 @@
 define(["jquery", "widget"], function ($) {
 
-
 ////----
 
-
 var slice = Array.prototype.slice;
-
 var eventReg = /^([\w:-]*)\s*(.*)$/;
-
 
 ////----
 
@@ -51,11 +47,12 @@ var Raw = function (data, render, parent, node) {
     var sel, added;
 
     this.render = render;
+    this.widget = render.widget;
     this.parent = parent;
-    this.node = node;
     this.options = parent ? parent.options : render.options;
     this.r = parent ? parent.r : render.render;
     this.args = parent ? parent.args : [render.options, render.widget];
+    this.node = node;
     this.selector = data[0];
 
     sel = Sel.compile(this.selector);
@@ -137,7 +134,9 @@ Raw.prototype = {
     },
 
     getAdded: function(data){
-        var  result = {}, i = 0, v, children = [];
+        var that = this;
+        var result = {}, i = 0, v, children = [];
+
         if($.isPlainObject(data[0])){
             result.data = data[0];
             i = 1;
@@ -148,12 +147,7 @@ Raw.prototype = {
                 this.getArrayChild(v, children);
             }
             else if(v != null && typeof v !== "boolean"){
-                if(v instanceof Raw){
-                    children.push(v);
-                }
-                else{
-                    children.push(String(v));
-                }
+                children.push(String(v));
             }
         }
         if(children.length === 1 && typeof children[0] === "string"){
@@ -162,11 +156,31 @@ Raw.prototype = {
         else if(children.length > 0){
             result.children = children;
         }
-        return {
+
+        result = {
             data: result.data || {},
             children: result.children || [],
             text: result.text || ""
         };
+        $.each(result.data, function (key, value) {
+            var args = [];
+            if(/^on/.test(key)){
+                if($.isArray(value)){
+                    args = slice.call(value, 1);
+                    value = value[0];
+                }
+                if($.isFunction(value)){
+                    result.data[key] = function () {
+                        return value.apply(that.render.widget, args.concat(slice.call(arguments, 0)));
+                    };
+                }
+                else{
+                    return $.error("Event error: " + value);
+                }
+            }
+        });
+
+        return result;
     },
 
     getArrayChild: function(child, children){
@@ -180,24 +194,20 @@ Raw.prototype = {
                     that.getArrayChild(c, children);
                 }
                 else if(c != null && typeof c !== "boolean"){
-                    if(c instanceof Raw){
-                        children.push(c);
-                    }
-                    else{
-                        children.push(String(c));
-                    }
+                    children.push(String(c));
                 }
             });
         }
     },
 
-    setRender: function(added) {
+    setRender: function(added, notRaw) {
         var that = this;
         var name = added.name;
         var data = added.data;
         var widget = this.render.widget;
         var args = [this.render.options, widget];
         var renders = widget.renders || {};
+        var result = [];
         var render;
 
         if(!name || !(render = renders[name])){
@@ -206,24 +216,33 @@ Raw.prototype = {
 
         if($.isArray(data)){
             $.each(data, function (i, item) {
-                that.setRenderItem(render, [item, i].concat(args));
+                result.push(that.setRenderItem(render, [item, i].concat(args), notRaw));
             });
         }
         else{
             if(data){
                 args = [data].concat(args);
             }
-            this.setRenderItem(render, args);
+            result.push(this.setRenderItem(render, args, notRaw));
+        }
+
+        if(notRaw){
+            return result;
         }
     },
 
-    setRenderItem: function(render, args){
+    setRenderItem: function(render, args, notRaw){
         var result = render.apply(this.render.widget, args);
         var raw;
 
         if($.isArray(result[0])){
             result = ["div", result];
         }
+
+        if(notRaw){
+            return result;
+        }
+
         this.options = args[0];
         this.r = render;
         this.args = args;
@@ -233,12 +252,14 @@ Raw.prototype = {
         this.parent.children.push(raw);
     },
 
-    setSlot: function(added){
+    setSlot: function(added, notRaw){
+        var that = this;
         var name = added.name;
         var handle = added.handle || function(){};
         var widget = this.render.widget;
         var slots = widget.options.slots || {};
-        var slot, result;
+        var result = [];
+        var slot, ret, raw;
 
         if(!name){
             $.error("Slot error: " + this.selector);
@@ -247,27 +268,30 @@ Raw.prototype = {
             return;
         }
 
-        result = handle.call(widget, slot, this.render.options, widget);
-
-        if(result instanceof Raw){
-            result.parent = this.parent;
-            this.parent.children.push(result);
-            return;
+        ret = handle.call(widget, slot, this.render.options, widget);
+        if($.isArray(ret) && $.isArray(ret[0])){
+            result = result.concat(ret);
+        }
+        else{
+            result.push(ret);
         }
 
-        if($.isArray(result)){
-            if(typeof result[0] !== "string"){
-                result = result.length > 1 ? ["div", result] :  result[0];
-            }
-            if(result instanceof Raw){
-                result.parent = this.parent;
-                this.parent.children.push(result);
-                return;
-            }
 
-            raw = new Raw(result, this.render, this);
-            raw.parent = this.parent;
-            this.parent.children.push(raw);
+        if(notRaw){
+            return result;
+        }
+        else{
+            $.each(result, function (i, item) {
+                if(item == null || typeof item === "boolean"){
+                    return;
+                }
+                if(!$.isArray(item)){
+                    item = ["span", String(item)];
+                }
+                raw = new Raw(item, that.render, that);
+                raw.parent = that.parent;
+                that.parent.children.push(raw);
+            });
         }
     },
 
@@ -287,27 +311,10 @@ Raw.prototype = {
             $.error("Widget error: " + this.selector);
         }
 
-        if(added.data){
-            $.each(added.data, function (key, value) {
-                var args = [];
-                if(/^on/.test(key)){
-                    if($.isArray(value)){
-                        args = slice.call(value, 1);
-                        value = value[0];
-                    }
-                    if($.isFunction(value)){
-                        added.data[key] = function () {
-                            return value.apply(that.render.widget, args.concat(slice.call(arguments, 0)));
-                        };
-                    }
-                }
-            });
-        }
-
         if(added.children){
             $.each(added.children, function (i, child) {
                 var match, added;
-                if($.isArray(child) && (match = child[0].match(/^slot\[name=(\w+)\]$/))){
+                if($.isArray(child) && (typeof child[0] === "string") && (match = child[0].match(/^slot\[name=(\w+)\]$/))){
                     added = that.getAdded(child.slice(1));
                     slots[match[1]] = added;
                 }
@@ -321,21 +328,11 @@ Raw.prototype = {
         }
 
         $.each(slots, function (key, slot) {
-            if(slot.children.length){
-                $.each(slot.children, function (i, child) {
-                    var data = child[1];
-                    if(toString.call(data) === "[object Object]"){
-                        $.each(data, function (k, v) {
-                            if(/^on(\w+)$/.test(k)){
-                                data[k] = function () {
-                                    v.apply(that.render.widget, arguments);
-                                };
-                            }
-                        });
-                    }
-                });
-                slot.children = new Raw(["div", slot.children], that.render).children;
-            }
+            var result = [];
+            $.each(slot.children, function (i, child) {
+                result = result.concat(that.formatWidgetChildren(child));
+            });
+            slot.children = result;
         });
 
         this.tag = added.data.tag || $.widgets[name]["prototype"]["defaultTag"];
@@ -347,16 +344,60 @@ Raw.prototype = {
                     return (function (raw) {
                         $(raw.node)[name](added.data || {}, {slots: slots});
                     }).apply(that.render.widget, slice.call(arguments, 0));
+                },
+                update: function (raw) {
+                    var instance = $(raw.node)[name]("instance");
+                    if(instance){
+                        instance["_update"]();
+                    }
                 }
             }
         };
+    },
+
+    formatWidgetChildren: function(child){
+        var that = this;
+        var result = [];
+        var match, added, ret;
+
+        if(typeof child === "string"){
+            return [child];
+        }
+
+        if(match = child[0].match(/^slot\[name=(\w+)\]$/)){
+            child = that.setSlot({
+                name: match[1],
+                handle: child[1]
+            }, true);
+            $.each(child, function (i, c) {
+                result = result.concat(that.formatWidgetChildren(c));
+            });
+            return result;
+        }
+        else if(match = child[0].match(/^render\[name=(\w+)\]$/)){
+            child = that.setRender({
+                name: match[1],
+                data: child[1]
+            }, true);
+            $.each(child, function (i, c) {
+                result = result.concat(that.formatWidgetChildren(c));
+            });
+            return result;
+        }
+        else{
+            added = that.getAdded(child.slice(1));
+            $.each(added.children, function (i, child) {
+                result = result.concat(that.formatWidgetChildren(child));
+            });
+            return [[child[0], added.data, result.length ? result : added.text]];
+        }
     },
 
     setData: function(value){
 
         var that = this;
         var data = this.data = {};
-        var hooks = {}, events = {}, match;
+        var match;
 
         $.each(value, function(k, v){
             if(k === "key"){
@@ -369,44 +410,18 @@ Raw.prototype = {
                 data.class = v;
             }
             else if(match = k.match(/^on(\w+)$/)){
-                if(
-                    $.inArray(match[1], ["create", "update", "destroy"]) > -1){
-                    hooks[match[1]] = v;
+                if($.inArray(match[1], ["create", "update", "destroy"]) > -1){
+                    data.hooks = data.hooks || {};
+                    data.hooks[match[1]] = v;
                 }
                 else{
-                    events[match[1]] = v;
+                    data.events = data.events || {};
+                    data.events[match[1]] = v;
                 }
             }
             else{
                 data.attrs = data.attrs || {};
                 data.attrs[k] = typeof v === "object" ? JSON.stringify(v) : v;
-            }
-        });
-
-        this.setHooksEvents(hooks, "hooks");
-        this.setHooksEvents(events, "events");
-    },
-
-    setHooksEvents: function(value, key){
-
-        var that = this;
-        var args = [];
-        var o = this.data[key] = {};
-
-        $.each(value, function (k, v) {
-
-            if($.isArray(v)){
-                args = slice.call(v, 1);
-                v = v[0];
-            }
-
-            if($.isFunction(v)){
-                o[k] = function () {
-                    return v.apply(that.render.widget, args.concat(slice.call(arguments, 0)));
-                };
-            }
-            else{
-                return $.error("Hook/Event error: " + value);
             }
         });
     },
@@ -419,11 +434,6 @@ Raw.prototype = {
 
         $.each(value, function (i, item) {
             if(item == null || typeof item === "boolean"){
-                return;
-            }
-            if(item instanceof Raw){
-                item.parent = that;
-                that.children.push(item);
                 return;
             }
             if(typeof item === "string"){
@@ -549,13 +559,7 @@ Diff.prototype = {
                 if(key === "value" && this.isFormNode(node)){
                     $(node).val(value);
                 }else{
-                    try{
-                        $(node).attr(key, value);
-                    }catch (e) {
-                        console.log(999, raw)
-
-                    }
-
+                    $(node).attr(key, value);
                 }
             },
 
@@ -1196,11 +1200,14 @@ Render.prototype = {
             data = [];
         }
 
-        if($.isArray(data[0])){
-            data = ["this", data];
+        if(!data.length){
+            this.raw = null;
+            return;
         }
-
-        this.raw = data.length ? new Raw(data, this) : null;
+        if(typeof data[0] !== "string"){
+            data = data.length > 1 ? ["this", data] : data[0];
+        }
+        this.raw = new Raw(data, this);
     },
 
     mergeRaw: function(update){
@@ -1421,9 +1428,6 @@ $.extend({
 });
 
 
-
-
-
 ////----
 
 
@@ -1432,6 +1436,8 @@ if($.Widget){
     $.extend($.Widget.prototype, {
 
         renders: {},
+
+        _update: function(){},
 
         _render: function (element, options, render) {
             var widget = this;

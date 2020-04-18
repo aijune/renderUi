@@ -7,9 +7,7 @@ define(["jquery", "widgets/article"], function ($) {
                 return ["widget[name=article]", [
                     ["slot[name=title]", "Forms"],
                     ["slot[name=btngroup]", {
-                        onclick: function(e, data){
-
-                        }
+                        onclick: w._clickBtngroup
                     },
                         ["button.btn.btn-primary[type=button]", "Primary"],
                         ["button.btn.btn-secondary[type=button]", "secondary"],
@@ -37,7 +35,9 @@ define(["jquery", "widgets/article"], function ($) {
                 return ["div.card",
                     ["div.card-header", "Theme"],
                     ["div.card-body",
-                        ["form", {oncreate: w._form},
+                        ["form", {
+                            oncreate: w._form
+                        },
                             ["div.form-group",
                                 ["label", "Email address"],
                                 ["input.form-control[name=email][type=email][placeholder=Enter email]"],
@@ -60,6 +60,41 @@ define(["jquery", "widgets/article"], function ($) {
 
         _init: function () {
             this._render();
-        }
+        },
+
+        _clickBtngroup: function (data, e, raw) {
+            console.log(data, raw);
+        },
+
+        _form: function(raw){
+            raw.widget.validator = raw.widget._validate(raw.node, {
+                descriptor: {
+                    email: {
+                        type: "email",
+                        required: true,
+                        message: "Name is required",
+                        valid: "Name is ok"
+                    },
+                    password: {
+                        required: true,
+                        message: "Password is required",
+                        valid: "Name is ok"
+                    },
+                    agreement: {
+                        pattern: /^agreement$/,
+                        required: true,
+                        message: "Agreement is required",
+                        valid: "Name is ok"
+                    }
+                }
+            });
+        },
+
+         _submit: function (e, raw) {
+             e.preventDefault();
+             raw.widget.validator.validate(function (fields) {
+                 console.log(fields);
+             });
+         }
     });
 });

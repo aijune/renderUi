@@ -1,4 +1,4 @@
-define(["jquery"], function ($) {
+define(["jquery", "validator"], function ($) {
 
     $.widget("article", {
 
@@ -20,7 +20,7 @@ define(["jquery"], function ($) {
                     }],
                     ["slot[name=btngroup]", function (s, o, w) {
                         return ["div.btn-group", {
-                            onclick: w._click
+                            onclick: [w._click, s.data]
                         }, [
                             s.children
                         ]];
@@ -42,13 +42,20 @@ define(["jquery"], function ($) {
             this._render();
         },
 
-        _click: function (e) {
-            this._trigger("onclick", e, {raw: $.data(e.target, "_raw_")});
+        _update: function(){
+            this._render("update");
+        },
+
+        _click: function (data, e) {
+            if(data.onclick){
+                data.onclick(data, e, $(e.target).raw());
+            }
         },
 
         _minHeight: function () {
             return this.window.height() - $(".layout-header").outerHeight() - $(".layout-title").outerHeight();
         }
+
     });
 
 });

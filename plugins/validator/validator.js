@@ -1,5 +1,4 @@
-define(["jquery", "async-validator", "widget"], function ($, schema) {
-
+define(["jquery", "async-validator", "widget"], function ($, Schema) {
 
     var Validator = function (widget, form, o) {
 
@@ -16,7 +15,7 @@ define(["jquery", "async-validator", "widget"], function ($, schema) {
                 delete val.valid;
             }
         });
-        this.validator = new schema(o.descriptor);
+        this.validator = new Schema(o.descriptor);
 
         if(o.trigger){
             this.trigger = o.trigger;
@@ -106,7 +105,7 @@ define(["jquery", "async-validator", "widget"], function ($, schema) {
                 }, true);
 
                 render.hook(elem.parent(), "update", function (raw) {
-                    raw.children.push(new raw.constructor(["div.invalid-feedback", error.message], render));
+                    raw.children.push(new raw.constructor(["div.invalid-feedback", error.message], render, raw));
                 }, true);
             });
 
@@ -136,7 +135,7 @@ define(["jquery", "async-validator", "widget"], function ($, schema) {
 
                 render.hook(elem.parent(), "update", function (raw) {
                     if(valid[key]){
-                        raw.children.push(new raw.constructor(["div.valid-feedback", valid[key]], render));
+                        raw.children.push(new raw.constructor(["div.valid-feedback", valid[key]], render, raw));
                     }
                 }, true);
             });
@@ -150,7 +149,8 @@ define(["jquery", "async-validator", "widget"], function ($, schema) {
 
         $.extend($.Widget.prototype, {
             _validate: function (form, options) {
-                return new Validator(this, form, options);
+                form = $(form);
+                return new Validator(this, form[0], options);
             }
         });
     }
