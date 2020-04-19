@@ -16,14 +16,15 @@ define(["config", "jquery", "router", "widgets/layout"], function(config, $){
                     view.pagewelcome();
                 });
             },
+            "/dropdown": function (view, state) {
+                require(["pagedropdown"], function () {
+                    view.pagedropdown();
+                });
+            },
             "/forms": function (view, state) {
                 require(["pageforms"], function () {
                     view.pageforms();
                 });
-            },
-            "/dropdowns": function (view, state) {
-                view.html(333);
-                //view.dropdowns();
             },
             "/buttons": function (view, state) {
                 view.html(444);

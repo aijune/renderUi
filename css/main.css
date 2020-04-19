@@ -98,8 +98,6 @@ html{
     padding: 0 20px;
 }
 .layout-topbar .dropdown-menu{
-    right: 0;
-    left: auto;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 .layout-body{

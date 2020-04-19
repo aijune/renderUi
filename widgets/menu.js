@@ -1,4 +1,4 @@
-define(["jquery", "bootstrap", "render"], function ($) {
+define(["jquery", "render"], function ($) {
 
     $.widget("menu", {
         defaultTag: "ul",

@@ -313,9 +313,11 @@ Raw.prototype = {
 
         if(added.children){
             $.each(added.children, function (i, child) {
-                var match, added;
-                if($.isArray(child) && (typeof child[0] === "string") && (match = child[0].match(/^slot\[name=(\w+)\]$/))){
+                var match, sel, added;
+                if($.isArray(child) && (match = child[0].match(/^slot(?:.*)\[name=(\w+)\](?:.*)$/))){
+                    sel = Sel.compile(child[0]);
                     added = that.getAdded(child.slice(1));
+                    added.data = $.widget.extend({}, that.transClassStyle(sel.data), that.transClassStyle(added.data));
                     slots[match[1]] = added;
                 }
                 else{
@@ -364,7 +366,7 @@ Raw.prototype = {
             return [child];
         }
 
-        if(match = child[0].match(/^slot\[name=(\w+)\]$/)){
+        if(match = child[0].match(/^slot(?:.*)\[name=(\w+)\](?:.*)$/)){
             child = that.setSlot({
                 name: match[1],
                 handle: child[1]
@@ -1241,7 +1243,7 @@ Render.prototype = {
         this.oldRaw = this.raw;
     },
 
-    update: function (value) {
+    update: function (value, callback) {
         var that = this;
         var delay;
 
@@ -1262,6 +1264,10 @@ Render.prototype = {
                 that.patch();
 
                 //--
+
+                if(callback){
+                    callback();
+                }
 
                 $.each(that.updateHooks, function (key, hook) {
                     hook.call(that);
