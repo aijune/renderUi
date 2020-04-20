@@ -5,14 +5,7 @@ define(["jquery", "widgets/article"], function ($) {
         renders: {
             main: function (o, w) {
                 return ["widget[name=article]", [
-                    ["slot[name=title]", "Dropdown"],
-                    ["slot[name=btngroup]", {
-                        onclick: w._clickBtngroup
-                    },
-                        ["button.btn.btn-primary[type=button]", "Primary"],
-                        ["button.btn.btn-secondary[type=button]", "secondary"],
-                        ["button.btn.btn-warning[type=button]", "warning"]
-                    ],
+                    ["slot[name=title]", o.route.title],
                     ["slot[name=content]", [
                         ["render[name=grid]"]
                     ]]
@@ -60,10 +53,6 @@ define(["jquery", "widgets/article"], function ($) {
 
         _init: function () {
             this._render();
-        },
-
-        _clickBtngroup: function (data, e, raw) {
-            console.log(data, raw);
         },
 
         _form: function(raw){

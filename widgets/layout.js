@@ -1,4 +1,4 @@
-define(["jquery", "render", "history", "widgets/menu", "widgets/dropdown"], function ($) {
+define(["jquery", "jqueryextent", "render", "history", "widgets/menu", "widgets/dropdown"], function ($) {
 
     $.widget("layout", {
         options: {

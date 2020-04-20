@@ -366,7 +366,14 @@ Raw.prototype = {
             return [child];
         }
 
-        if(match = child[0].match(/^slot(?:.*)\[name=(\w+)\](?:.*)$/)){
+        if(!child.length){
+            return [];
+        }
+
+        if(
+            (match = child[0].match(/^slot(?:.*)\[name=(\w+)\](?:.*)$/)) &&
+            $.isFunction(child[1])
+        ){
             child = that.setSlot({
                 name: match[1],
                 handle: child[1]

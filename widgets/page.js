@@ -1,6 +1,6 @@
 define(["jquery", "validator"], function ($) {
 
-    $.widget("article", {
+    $.widget("page", {
 
         options: {
 

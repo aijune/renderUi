@@ -1,10 +1,10 @@
-define(["jquery", "widgets/article"], function ($) {
+define(["jquery", "widgets/page"], function ($) {
 
     $.widget("pagewelcome", {
 
         renders: {
             main: function (o, w) {
-                return ["widget[name=article]", [
+                return ["widget[name=page]", [
                     ["slot[name=title]", "Welcome"],
                     ["slot[name=content]", [
                         ["div.jumbotron", [

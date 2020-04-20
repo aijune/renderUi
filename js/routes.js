@@ -17,8 +17,10 @@ define(["config", "jquery", "router", "widgets/layout"], function(config, $){
                 });
             },
             "/dropdown": function (view, state) {
-                require(["pagedropdown"], function () {
-                    view.pagedropdown();
+                require(["demodropdown"], function () {
+                    view.demodropdown({
+                        route: state
+                    });
                 });
             },
             "/forms": function (view, state) {

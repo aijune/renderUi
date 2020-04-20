@@ -1,3 +1,5 @@
+/*menu*/
+
 .menu{
     padding-left: 0;
     list-style: none;
@@ -40,6 +42,9 @@
 
 html{
     font-size: 14px;
+}
+body{
+    overflow-x: hidden;
 }
 .layout{
     display: flex;
@@ -88,6 +93,7 @@ html{
 .layout-topbar .nav{
     display: flex;
     margin-left: auto;
+    padding-right: 15px;
 }
 .layout-topbar .dropdown-toggle{
     display: block;
@@ -104,6 +110,7 @@ html{
     display: flex;
 }
 .layout-aside{
+    flex-shrink: 0;
     background-color: #343a40;
     transition: width 0.35s ease-in-out;
 
@@ -124,9 +131,8 @@ html{
     justify-content: space-between;
     align-items: center;
     background-color: #f8f9fa;
-    padding: 1rem;
+    padding: 15px;
 }
 .layout-content{
-    padding: 1rem;
-    overflow-x: hidden;
+    padding: 15px;
 }

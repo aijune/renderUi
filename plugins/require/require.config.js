@@ -3,9 +3,10 @@ requirejs = {
     urlArgs: "v=20200220",
     paths: {
         jquery: "../plugins/jquery/jquery",
+        jqueryextent: "../plugins/jquery/jquery.extend",
         history: "../plugins/history/history",
         router: "../plugins/router/router",
-        mobiscroll: "../plugins/mobiscroll/js/a",
+        position: "../plugins/popper/position",
         popper: "../plugins/popper/popper",
         bootstrap: "../plugins/bootstrap/bootstrap",
         "async-validator": "../plugins/validator/async-validator",

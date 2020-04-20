@@ -3,15 +3,14 @@ define(["jquery", "render"], function ($) {
     $.widget("dropdown", {
         defaultTag: "div",
         options: {
-            class: {
-                dropdown: {init: "add"}
-            },
             isDropdown: false
         },
         renders: {
             main: function (o, w) {
                 return ["this", {
-                    class: $.extend({}, o.class, {
+                    class: $.extend({}, o.class || {
+                        dropdown: {init: "add"}
+                    }, {
                         show: {init: o.isDropdown && "add"}
                     })
                 }, [
@@ -22,7 +21,8 @@ define(["jquery", "render"], function ($) {
                         return ["div.dropdown-menu", {
                             class: $.extend({}, s.data.class, {
                                 show: {init: o.isDropdown && "add"}
-                            })
+                            }),
+                            style: o.menuStyle
                         }, [
                             s.children
                         ]];
@@ -45,16 +45,47 @@ define(["jquery", "render"], function ($) {
             });
 
             this._render();
+
+            this.toggle = this.element.find(".dropdown-toggle");
             this.menu = this.element.find(".dropdown-menu");
             this.items = this.menu.find(".dropdown-item");
         },
         _clickToggle: function (e, raw) {
             var that = this;
-            that._render("update",
-                function (o) {
-                    o.isDropdown = !o.isDropdown;
-                });
+
+            $.position({
+                element: this.menu,
+                target: this.toggle,
+                handler: function(state){
+                    var pos = that._position(state);
+                    that._render("update", function (o) {
+                        o.isDropdown = !o.isDropdown;
+                        o.menuStyle = {
+                            left: pos.left,
+                            top: pos.top
+                        };
+                    });
+                }
+            });
         },
+        _position: function(state){
+            var right = this.menu.hasClass("dropdown-menu-right");
+            var offset = 0;
+
+            if(right){
+                return {
+                    left: state.target.position.left + state.target.width - state.element.width,
+                    top: state.target.position.top + state.target.height
+                }
+            }
+            else{
+                return {
+                    left: state.target.position.left,
+                    top: state.target.position.top + state.target.height
+                }
+            }
+        },
+
         _clickItem: function(e, raw){
             this._menuClose();
         },
@@ -93,7 +124,8 @@ define(["jquery", "render"], function ($) {
         _closeDropdown: function(e){
             var target = $(e.target);
             if(
-                !target.closest(this.element).length &&
+                !target.closest(this.toggle).length &&
+                !target.closest(this.menu).length &&
                 this._render("option").isDropdown
             ){
                 this._menuClose();
