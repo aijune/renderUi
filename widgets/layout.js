@@ -60,7 +60,7 @@ define(["jquery", "jqueryextent", "render", "history", "widgets/menu", "widgets/
                 ]];
             },
             body: function (o, w) {
-                return ["main.layout-body", [
+                return ["main.layout-body", {class: o.state}, [
                     ["render[name=aside]"],
                     ["article.router-view"]
                 ]];
@@ -91,7 +91,7 @@ define(["jquery", "jqueryextent", "render", "history", "widgets/menu", "widgets/
                 return item ? ["a.dropdown-item", {href: item.href}, item.text] : ["div.dropdown-divider"];
             },
             aside: function (o, w) {
-                return ["aside.layout-aside", {class: o.state}, [
+                return ["aside.layout-aside", [
                     ["widget[name=menu]", {items: o.menu}]
                 ]];
             }

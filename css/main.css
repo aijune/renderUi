@@ -1,3 +1,7 @@
+.dropdown-menu-right {
+    right: auto;
+}
+
 /*menu*/
 
 .menu{
@@ -43,14 +47,14 @@
 html{
     font-size: 14px;
 }
-body{
-    overflow-x: hidden;
-}
 .layout{
     display: flex;
     flex-direction: column;
 }
 .layout-header{
+    position: sticky;
+    top: 0;
+    z-index: 1071;
     display: flex;
 }
 .layout-brand{
@@ -110,15 +114,19 @@ body{
     display: flex;
 }
 .layout-aside{
+    position: sticky;
+    z-index: 1000;
+    top: 50px;
+    height: calc(100vh - 50px);
     flex-shrink: 0;
     background-color: #343a40;
     transition: width 0.35s ease-in-out;
 
 }
-.layout-aside.max{
+.max .layout-aside{
     width: 230px;
 }
-.layout-aside.min{
+.min .layout-aside{
     width: 50px;
 }
 .layout-article{
@@ -127,6 +135,9 @@ body{
     flex-grow: 1;
 }
 .layout-title{
+    position: sticky;
+    z-index: 1000;
+    top: 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -135,4 +146,11 @@ body{
 }
 .layout-content{
     padding: 15px;
+}
+.anchor:before{
+    display: block;
+    height: 116px;
+    margin-top: -116px;
+    visibility: hidden;
+    content: "";
 }

@@ -126,7 +126,7 @@ Raw.prototype = {
         var style = {};
         $.each(value, function(i, v){
             if(v){
-                v = v.split("=");
+                v = v.split(/:\s*/);
                 style[v[0]] = v[1];
             }
         });

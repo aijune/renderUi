@@ -11,7 +11,7 @@ define(["jquery", "widgets/page"], function ($) {
                 return ["widget[name=page]", [
                     ["slot[name=title]", [
                         ["slot[name=title]", function (s, o, w) {
-                            return s.text;
+                            return ["span", s.text];
                         }]
                     ]],
                     ["slot[name=content]", [
@@ -27,9 +27,17 @@ define(["jquery", "widgets/page"], function ($) {
                         }]
                     ],
                     ["div.col-3",
-                        ["slot[name=nav]", function (s, o, w) {
-                            return s.children;
-                        }]
+                        ["nav", {
+                            style: {
+                                position: "sticky",
+                                top: "116px"
+                            }
+                        }, [
+                            ["slot[name=nav]", function (s, o, w) {
+                                return s.children;
+                            }]
+                        ]]
+
                     ]
                 ];
             }

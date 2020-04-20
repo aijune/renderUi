@@ -30,23 +30,23 @@ define(["jquery", "render"], function ($) {
             modal: function (o, w) {
                 return ["div.modal", {
                     tabindex: "-1",
-                    class: [
-                        {name: o.type, init: o.type && "add"},
-                        {name: "fade", init: o.fade && "add"},
-                        {name: "show", delay: o.fade && "add", destroy: o.fade && "remove"}
-                    ],
-                    onclick: "_backdrop",
-                    onkeydown: "_keyboard",
-                    onmounted: "_mountedModal"
+                    class: {
+                        [o.type]: {init: o.type && "add"},
+                        fade: {init: o.fade && "add"},
+                        show: {delay: o.fade && "add", destroy: o.fade && "remove"}
+                    },
+                    onclick: w._backdrop,
+                    onkeydown: w._keyboard,
+                    oncreate: w._createModal
                 }, [
                     ["div.modal-dialog", {
-                        class: [
-                            {name: "modal-" + o.size, init: o.size && "add"},
-                            {name: "modal-dialog-centered", init: o.centered && "add"}
-                        ]
+                        class: {
+                            ["modal-" + o.size]: {init: o.size && "add"},
+                            "modal-dialog-centered": {init: o.centered && "add"}
+                        }
                     }, [
                         ["div.modal-content", [
-                            [!!o.title, "div.modal-header", [
+                            !!o.title && ["div.modal-header", [
                                 ["h5.modal-title", o.title],
                                 [!!o.closable, "button.close", {
                                     type: "button",
@@ -71,6 +71,14 @@ define(["jquery", "render"], function ($) {
                         ]]
                     ]]
                 ]];
+            },
+            backdrop: function (o, w) {
+                return ["div.modal-backdrop", {
+                    class: [
+                        {name: "fade", init: o.fade && "add"},
+                        {name: "show", delay: "add", destroy: "remove"}
+                    ]
+                }];
             }
         },
         _create: function () {
@@ -78,74 +86,123 @@ define(["jquery", "render"], function ($) {
             this._render();
         },
 
-        _init: function () {
-            this._fragment(function (o) {
-                return [!o.closed, "div.fpx-modal", {
-                    onremove: "_removeAll"
-                }, [
-                    ["_modal", o],
-                    ["_modalbackdrop", o]
-                ]];
+        _removeAll: function(sel, rm){
+            if(this.options.fade){
+                this._delay(function () {
+                    rm();
+                    this._resetBody();
+                }, 300);
+            }else{
+                rm();
+                this._resetBody();
+            }
+        },
+
+        _mountedModal: function (sel) {
+            $(sel.node).focus();
+            this._setBody();
+        },
+
+        _setBody: function(){
+            var data, count, isOverflow, scrollWidth, fixedElems;
+
+            this.body = this.document.find("body");
+
+            data = this.body.data("fpx-modal") || {};
+            count = data.count || 0;
+
+            if(count > 0){
+                this.body.data("fpx-modal", {
+                    isOverflow: data.isOverflow,
+                    fixedElems: data.fixedElems,
+                    count: count + 1
+                });
+                return;
+            }
+
+            isOverflow = this.body[0].scrollHeight > this.window[0].innerHeight;
+
+            if(isOverflow){
+
+                scrollWidth = this._getScrollWidth();
+                fixedElems = $(".fixed-top, .fixed-bottom, .is-fixed, .sticky-top");
+
+                this.body.css({
+                    paddingRight: scrollWidth + parseFloat(this.body.css("paddingRight"))
+                });
+
+                fixedElems.each(function (i, elem) {
+                    elem = $(elem);
+                    elem.css({
+                        marginRight: scrollWidth + parseFloat(elem.css("marginRight"))
+                    });
+                });
+            }
+
+            this.body.addClass("modal-open");
+            this.body.data("fpx-modal", {
+                isOverflow: isOverflow,
+                fixedElems: fixedElems,
+                count: 1
             });
         },
 
+        _resetBody: function(){
+            var data = this.body.data("fpx-modal");
+            var count = data.count;
 
-        _clickToggle: function (e, raw) {
-            var that = this;
-            that._render("update",
-                function (o) {
-                    o.isDropdown = !o.isDropdown;
+            if(count > 1){
+                this.body.data("fpx-modal", {
+                    isOverflow: data.isOverflow,
+                    fixedElems: data.fixedElems,
+                    count: count - 1
                 });
-        },
-        _clickItem: function(e, raw){
-            this._menuClose();
-        },
-        _keydownToggle: function(e){
-            if(
-                e.keyCode === 40 &&
-                this.items.length
-            ){
-                if(!this._render("option").isDropdown){
-                    this._menuOpen();
-                }
-                else{
-                    this.items.eq(0).focus();
-                }
-            }
-        },
-        _keydownItem: function(e){
-            var target = $(e.currentTarget);
-            var index = this.items.index(target);
-            var leng = this.items.length;
-
-            if(e.keyCode === 40 && index < leng){
-                index++;
-            }
-            else if(e.keyCode === 38 && index > 0){
-                index--;
+                return;
             }
 
-            this.items.eq(index).focus();
+            if(data.isOverflow){
+                this.body.removeAttr("style");
+                data.fixedElems.removeAttr("style");
+            }
+
+            this.body.removeClass("modal-open");
+            this.body.removeData("fpx-modal");
         },
-        _keydown: function(e){
-            if(e.keyCode === 27){
-                this._menuClose();
+
+        _getScrollWidth: function(){
+            var div = $("<div>").addClass("modal-scrollbar-measure").appendTo("body");
+            var width = div[0].getBoundingClientRect().width - div[0].clientWidth;
+            div.remove();
+            return width;
+        },
+
+        _clickClose: function () {
+            this.close();
+        },
+
+        _clickButton: function(i, event, sel){
+            var item = this.options.buttons[i];
+            if($.isFunction(item.click)){
+                item.click.call(this.element, event, sel.node);
             }
         },
-        _closeDropdown: function(e){
-            var target = $(e.target);
-            if(
-                !target.closest(this.element).length &&
-                this._render("option").isDropdown
-            ){
-                this._menuClose();
+
+        _backdrop: function (event, sel) {
+            if (this.options.backdrop && event.target === sel.node) {
+                this.close();
             }
         },
-        _menuOpen: function(){
-            this._render("update", {isDropdown: true});
+
+        _keyboard: function (event) {
+            if (this.options.keyboard && event.keyCode === 27) {
+                this.close();
+            }
         },
-        _menuClose: function () {
-            this._render("update", {isDropdown: false});
+
+        close: function(){
+            this._fragment("update", {
+                closed: true
+            });
         }
     });
 });

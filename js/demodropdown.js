@@ -69,7 +69,7 @@ define(["jquery", "widgets/code", "widgets/demo"], function ($, code) {
             },
             content: function (o, w) {
                 return [
-                    ["h4#base", "基本"],
+                    ["h4#base.anchor", "基本"],
                     ["p", "包含2个slot。slot[name=toggle]，定义切换按钮，按钮必须有 .dropdown-toggle类。slot[name=menu]，定义弹出menu。"],
                     ["div", {oncreate: [code, codeBase]}],
                     ["h4#right", "右对齐"],
