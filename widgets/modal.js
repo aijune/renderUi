@@ -39,45 +39,54 @@ define(["jquery", "render"], function ($) {
                     onkeydown: w._keyboard,
                     oncreate: w._createModal
                 }, [
-                    ["div.modal-dialog", {
-                        class: {
-                            ["modal-" + o.size]: {init: o.size && "add"},
-                            "modal-dialog-centered": {init: o.centered && "add"}
-                        }
-                    }, [
-                        ["div.modal-content", [
-                            !!o.title && ["div.modal-header", [
-                                ["h5.modal-title", o.title],
-                                [!!o.closable, "button.close", {
-                                    type: "button",
-                                    onclick: "_clickClose"
-                                }, [
-                                    ["span", "×"]
-                                ]]
-                            ]],
-                            ["div.modal-body", {onmounted: ["_slot", o.content]}],
-                            [!!o.buttons.length, "div.modal-footer",
-                                o.buttons.map(function (button, i) {
-                                    return ["button", {
-                                        type: "button",
-                                        class: [{name: button.classes, init: "add"}],
-                                        onclick: ["_clickButton", i]
-                                    }, [
-                                        [!!button.icon, "i." + button.icon],
-                                        ["span", button.text]
-                                    ]]
-                                })
-                            ]
-                        ]]
+                    ["render[name=dialog]"]
+                ]];
+            },
+            dialog: function(o, w){
+                return ["div.modal-dialog", {
+                    class: {
+                        ["modal-" + o.size]: {init: o.size && "add"},
+                        "modal-dialog-centered": {init: o.centered && "add"}
+                    }
+                }, [
+                    ["div.modal-content", [
+                        ["render[name=title]"],
+                        ["render[name=body]"],
+                        ["render[name=footer]"]
                     ]]
                 ]];
             },
+            title: function(o, w){
+                return ["slot[name=title]", function (s, o, w) {
+                    return ["div.modal-header", [
+                        ["h5.modal-title", s.text || s.children],
+                        !!o.closable && ["button.close", {
+                            type: "button",
+                            onclick: w._clickClose
+                        }, ["span", "×"]]
+                    ]];
+                }];
+            },
+            body: function(o, w){
+                return ["div.modal-body", [
+                    ["slot[name=content]", function (s, o, w) {
+                        return s.text || s.children;
+                    }]
+                ]];
+            },
+            footer: function(o, w){
+                return ["slot[name=footer]", function (s, o, w) {
+                    return ["div.modal-footer", {
+                        onclick: w._clickButton
+                    }, s.children];
+                }];
+            },
             backdrop: function (o, w) {
                 return ["div.modal-backdrop", {
-                    class: [
-                        {name: "fade", init: o.fade && "add"},
-                        {name: "show", delay: "add", destroy: "remove"}
-                    ]
+                    class: {
+                        fade: {init: o.fade && "add"},
+                        show: {delay: "add", destroy: "remove"}
+                    }
                 }];
             }
         },

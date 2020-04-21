@@ -16,7 +16,7 @@ define(["jquery", "validator"], function ($) {
             title: function (o, w) {
                 return ["div.layout-title",
                     ["slot[name=title]", function (s, o, w) {
-                        return ["span", s.text || s.children];
+                        return s.text || s.children;
                     }],
                     ["slot[name=btngroup]", function (s, o, w) {
                         return ["div.btn-group", {
