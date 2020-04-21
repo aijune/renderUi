@@ -247,9 +247,10 @@ Raw.prototype = {
         this.r = render;
         this.args = args;
         raw = new Raw(result, this.render, this);
-        raw.parent = this.parent;
-
-        this.parent.children.push(raw);
+        if(raw.tag !== "slot"){
+            raw.parent = this.parent;
+            this.parent.children.push(raw);
+        }
     },
 
     setSlot: function(added, notRaw){
@@ -289,8 +290,8 @@ Raw.prototype = {
                     item = ["span", String(item)];
                 }
                 raw = new Raw(item, that.render, that);
-                raw.parent = that.parent;
-                that.parent.children.push(raw);
+                raw.parent = that.parent.tag !== "render" ? that.parent : that.parent.parent;
+                raw.parent.children.push(raw);
             });
         }
     },

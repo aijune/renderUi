@@ -21,6 +21,14 @@ define(["jquery", "render"], function ($) {
         renders: {
             main: function (o, w) {
                 return !o.closed && ["this", {
+                    style: {
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        zIndex: 1039,
+                        width: "100vw",
+                        height: "100vh"
+                    },
                     onremove: w._removeAll
                 }, [
                     ["render[name=modal]"],
@@ -107,8 +115,8 @@ define(["jquery", "render"], function ($) {
             }
         },
 
-        _mountedModal: function (sel) {
-            $(sel.node).focus();
+        _createModal: function (raw) {
+            $(raw.node).focus();
             this._setBody();
         },
 

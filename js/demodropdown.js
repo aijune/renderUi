@@ -1,4 +1,4 @@
-define(["jquery", "widgets/code", "widgets/demo"], function ($, code) {
+define(["jquery", "widgets/code", "widgets/demo", "widgets/dropdown"], function ($, code) {
 
     var codeBase = `
         $(elem).render(function () {

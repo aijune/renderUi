@@ -23,6 +23,13 @@ define(["config", "jquery", "router", "widgets/layout"], function(config, $){
                     });
                 });
             },
+            "/modal": function (view, state) {
+                require(["demomodal"], function () {
+                    view.demomodal({
+                        route: state
+                    });
+                });
+            },
             "/forms": function (view, state) {
                 require(["pageforms"], function () {
                     view.pageforms();
