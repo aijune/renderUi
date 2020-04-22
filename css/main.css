@@ -1,6 +1,46 @@
 .dropdown-menu-right {
     right: auto;
 }
+.modal{
+    display: block;
+}
+
+/*popup-bottom*/
+
+.popup-bottom .modal-dialog,
+.popup-top .modal-dialog,
+.popup-left .modal-dialog,
+.popup-right .modal-dialog{
+    margin: 0;
+    position: fixed;
+}
+.popup-bottom .modal-dialog,
+.popup-top .modal-dialog{
+    max-width: 100vw;
+    width: 100vw;
+}
+.popup-left .modal-dialog,
+.popup-right .modal-dialog{
+    max-width: 33vw;
+    width: 33vw;
+    height: 100vw;
+}
+.popup-left .modal-dialog .modal-content,
+.popup-right .modal-dialog .modal-content{
+    height: 100vw;
+}
+.popup-bottom .modal-dialog{
+    bottom: 0;
+}
+.popup-top .modal-dialog{
+    top: 0;
+}
+.popup-left .modal-dialog{
+    left: 0;
+}
+.popup-right .modal-dialog{
+    right: 0;
+}
 
 /*menu*/
 
@@ -32,8 +72,7 @@
     transition: transform 0.35s;
 }
 .menu .menu{
-    overflow: hidden;
-    transition: height 0.35s;
+    display: none;
 }
 .menu .extend .menu{
     display: block;
@@ -54,7 +93,7 @@ html{
 .layout-header{
     position: sticky;
     top: 0;
-    z-index: 1071;
+    z-index: 1039;
     display: flex;
 }
 .layout-brand{
@@ -115,7 +154,7 @@ html{
 }
 .layout-aside{
     position: sticky;
-    z-index: 1000;
+    z-index: 1038;
     top: 50px;
     height: calc(100vh - 50px);
     flex-shrink: 0;
@@ -136,7 +175,7 @@ html{
 }
 .layout-title{
     position: sticky;
-    z-index: 1000;
+    z-index: 1038;
     top: 50px;
     display: flex;
     justify-content: space-between;

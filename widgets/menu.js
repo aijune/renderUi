@@ -25,13 +25,7 @@ define(["jquery", "render"], function ($) {
                         ["span", item.title],
                         item.subs && ["i.fa.fa-angle-down"]
                     ]],
-                    item.subs && ["ul.menu", {
-                        style: {
-                            height: [w._height, item]
-                        }
-                    },
-                        ["render[name=sub]", item.subs]
-                    ]
+                    item.subs && ["ul.menu", ["render[name=sub]", item.subs]]
                 ]];
             },
             sub: function(item, i, o, w){

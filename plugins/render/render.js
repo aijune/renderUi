@@ -169,6 +169,10 @@ Raw.prototype = {
                     args = slice.call(value, 1);
                     value = value[0];
                 }
+                if(value == null){
+                    delete result.data[key];
+                    return;
+                }
                 if($.isFunction(value)){
                     result.data[key] = function () {
                         return value.apply(that.render.widget, args.concat(slice.call(arguments, 0)));
@@ -270,7 +274,11 @@ Raw.prototype = {
         }
 
         ret = handle.call(widget, slot, this.render.options, widget);
-        if($.isArray(ret) && $.isArray(ret[0])){
+
+        if(typeof ret === "string"){
+            result.push(["span", ret]);
+        }
+        else if($.isArray(ret) && $.isArray(ret[0])){
             result = result.concat(ret);
         }
         else{

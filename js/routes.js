@@ -30,6 +30,13 @@ define(["config", "jquery", "router", "widgets/layout"], function(config, $){
                     });
                 });
             },
+            "/popup": function (view, state) {
+                require(["demopopup"], function () {
+                    view.demopopup({
+                        route: state
+                    });
+                });
+            },
             "/forms": function (view, state) {
                 require(["pageforms"], function () {
                     view.pageforms();
