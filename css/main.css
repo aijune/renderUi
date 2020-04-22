@@ -23,11 +23,11 @@
 .popup-right .modal-dialog{
     max-width: 33vw;
     width: 33vw;
-    height: 100vw;
+    height: 100vh;
 }
 .popup-left .modal-dialog .modal-content,
 .popup-right .modal-dialog .modal-content{
-    height: 100vw;
+    height: 100vh;
 }
 .popup-bottom .modal-dialog{
     bottom: 0;
@@ -40,6 +40,41 @@
 }
 .popup-right .modal-dialog{
     right: 0;
+}
+.modal.fade.popup-bottom .modal-dialog {
+    -webkit-transform: translate(0, 50px);
+    transform: translate(0, 50px);
+}
+.modal.fade.popup-left .modal-dialog {
+    -webkit-transform: translate(-50px, 0);
+    transform: translate(-50px, 0);
+}
+.modal.fade.popup-right .modal-dialog {
+    -webkit-transform: translate(50px, 0);
+    transform: translate(50px, 0);
+}
+.modal.show.popup-bottom .modal-dialog,
+.modal.show.popup-left .modal-dialog,
+.modal.show.popup-right .modal-dialog{
+     -webkit-transform: none;
+     transform: none;
+ }
+
+/*picker*/
+
+.picker{
+    display: flex;
+    overflow: hidden;
+    height: 200px;
+
+}
+.picker-content{
+    cursor: grab;
+    width: 100%;
+    font-size: 16px;
+    text-align: center;
+    -webkit-transition-timing-function: cubic-bezier(0.23, 1, 0.68, 1);
+    transition-timing-function: cubic-bezier(0.23, 1, 0.68, 1);
 }
 
 /*menu*/

@@ -27,7 +27,7 @@ define(["jquery", "render"], function ($) {
                         fade: {init: o.fade && "add"},
                         show: {delay: o.fade && "add", destroy: o.fade && "remove"}
                     },
-                    onclick: w._backdrop,
+                    onmousedown: w._backdrop,
                     onkeydown: w._keyboard,
                     oncreate: w._createModal,
                     ondestroy: [w._destroyElem, "modal"]

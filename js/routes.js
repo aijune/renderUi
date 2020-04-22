@@ -37,6 +37,13 @@ define(["config", "jquery", "router", "widgets/layout"], function(config, $){
                     });
                 });
             },
+            "/picker": function (view, state) {
+                require(["demopicker"], function () {
+                    view.demopicker({
+                        route: state
+                    });
+                });
+            },
             "/forms": function (view, state) {
                 require(["pageforms"], function () {
                     view.pageforms();
