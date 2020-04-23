@@ -20,14 +20,14 @@ define(["jquery", "render"], function ($) {
         },
         renders: {
             main: function (o, w) {
-                return !o.closed && ["div.modal", {
+                return !o.closed && ["this.modal", {
                     tabindex: "-1",
                     class: {
                         [o.type]: {init: o.type && "add"},
                         fade: {init: o.fade && "add"},
                         show: {delay: o.fade && "add", destroy: o.fade && "remove"}
                     },
-                    onmousedown: w._backdrop,
+                    onclick: w._backdrop,
                     onkeydown: w._keyboard,
                     oncreate: w._createModal,
                     ondestroy: [w._destroyElem, "modal"]
@@ -96,6 +96,12 @@ define(["jquery", "render"], function ($) {
 
             this.backdrop = $("<div>").appendTo("body");
             this._render(this.backdrop, {render: "backdrop"});
+        },
+
+        _update: function(){
+            this._render("update", function (o) {
+                $.extend(o, this.options);
+            });
         },
 
         _destroyElem: function(elem, raw, rm){

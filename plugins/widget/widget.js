@@ -284,7 +284,7 @@ $.Widget.prototype = {
         element = $( element || "<" + this.defaultTag + ">" || this )[ 0 ];
         this.element = $( element );
         this.uuid = widgetUuid++;
-        this.eventNamespace = "." + this.widgetName + this.uuid;
+        this.eventNamespace = "._" + this.widgetName + "_" + this.uuid;
 
         this.bindings = $();
         this.hoverable = $();

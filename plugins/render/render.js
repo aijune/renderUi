@@ -359,7 +359,10 @@ Raw.prototype = {
                 update: function (raw) {
                     var instance = $(raw.node)[name]("instance");
                     if(instance){
-                        instance["_update"]();
+                        instance.option( $.extend(added.data || {}, {slots: slots}));
+                        if (instance._update){
+                            instance._update();
+                        }
                     }
                 }
             }
@@ -1144,6 +1147,7 @@ Diff.prototype = {
 var renderUuid = 0;
 
 var Render = function (node, options) {
+    var renders;
 
     this.node = node;
     this.uuid = renderUuid++;
@@ -1222,8 +1226,11 @@ Render.prototype = {
             this.raw = null;
             return;
         }
-        if(typeof data[0] !== "string"){
+        while($.isArray(data[0])){
             data = data.length > 1 ? ["this", data] : data[0];
+        }
+        if(!/^this[\.#\[]*/.test(data[0])){
+            data = ["this", data];
         }
         this.raw = new Raw(data, this);
     },
@@ -1233,10 +1240,7 @@ Render.prototype = {
         var element = $(this.node);
 
         if(this.raw){
-
-            if(!this.raw.widget){
-                this.raw.tag = element.prop("tagName").toLowerCase();
-            }
+            this.raw.tag = element.prop("tagName").toLowerCase();
 
             if(!this.defaultRaw){
                 this.defaultRaw = element.data("_raw_") || this.diff.createRawByNode(this.node);
@@ -1270,6 +1274,11 @@ Render.prototype = {
             $.widget.extend(this.options, value);
         }
 
+        if(callback){
+            this.updateCallbacks = this.updateCallbacks || [];
+            this.updateCallbacks.push(callback);
+        }
+
         if(!this.updating){
             this.updating = true;
             delay = window.requestAnimationFrame || window.setTimeout;
@@ -1281,9 +1290,10 @@ Render.prototype = {
 
                 //--
 
-                if(callback){
-                    callback();
-                }
+                $.each(that.updateCallbacks, function (i, callback) {
+                    callback.call(that);
+                });
+                that.updateCallbacks = undefined;
 
                 $.each(that.updateHooks, function (key, hook) {
                     hook.call(that);

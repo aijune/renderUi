@@ -63,10 +63,14 @@
 /*picker*/
 
 .picker{
-    display: flex;
+    position: relative;
     overflow: hidden;
     height: 200px;
-
+}
+.picker-indicator{
+    position: absolute;
+    width: 100%;
+    border: solid 1px #cccccc;
 }
 .picker-content{
     cursor: grab;
