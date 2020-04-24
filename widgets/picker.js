@@ -5,8 +5,10 @@ define(["jquery", "render", "widgets/modal"], function ($) {
             place: "bottom",
             fade: false,
             closable: true,
+            backdrop: false,
             rows: 6,
             rowHeight: 40,
+            loop: true,
             source: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             transform: "translate3d(0px, 0px, 0px)"
         },
@@ -15,6 +17,7 @@ define(["jquery", "render", "widgets/modal"], function ($) {
                 return ["widget[name=modal]", {
                     type: "popup-" + o.place,
                     fade: o.fade,
+                    backdrop: o.backdrop,
                     closable: o.closable
                 }, [
                     ["slot[name=title]", [
@@ -24,11 +27,11 @@ define(["jquery", "render", "widgets/modal"], function ($) {
                     ]],
                     ["slot[name=content]", [
                         ["render[name=content]"]
-                        /*
-                        ["slot[name=content]", function (s, o, w) {
+
+                        /*["slot[name=content]", function (s, o, w) {
                             return s.text || s.children;
-                        }]
-                        */
+                        }]*/
+
                     ]],
                     ["slot[name=footer]", [
                         ["slot[name=footer]", function (s, o, w) {
@@ -54,7 +57,8 @@ define(["jquery", "render", "widgets/modal"], function ($) {
                         style: {
                             transform: o.transform,
                             transition: o.transition,
-                            lineHeight: o.rowHeight + "px"
+                            lineHeight: o.rowHeight + "px",
+                            marginTop: o.marginTop
                         }
                     }, [
                         o.source.map(function (item, i) {
@@ -79,7 +83,42 @@ define(["jquery", "render", "widgets/modal"], function ($) {
             o.contentHeight = o.source.length * o.rowHeight;
             o.yMax = o.indicatorTop;
             o.yMin = - (o.contentHeight - (o.indicatorTopRows + 1) * o.rowHeight);
+
+            if(o.loop){
+                o.loopMax = 0;
+                o.loopMin = o.yMin + (o.indicatorBotRows * o.rowHeight);
+            }
         },
+
+        _getSource: function(d){
+            var o = this.options;
+            var n, a = [], c = a.concat;
+
+            o.resource = $.extend([], o.source);
+            o.marginTop = undefined;
+
+            if(o.loop){
+                if(d > o.loopMax){
+                    n = Math.ceil((d - o.loopMax) / o.rowHeight);
+                }
+                else if(d < o.loopMin){
+                    n = Math.ceil((o.loopMin - d) / o.rowHeight);
+
+                }
+                if(n){
+                    n = Math.ceil(n / o.source.length);
+                    if(d > o.loopMax){
+                        o.marginTop = - (o.contentHeight * n);
+                    }
+                    o.times = ++n;
+                    while (n--){
+                        a.push(o.source);
+                    }
+                    o.resource = c.apply([], a);
+                }
+            }
+        },
+
         _down: function (e, raw) {
             this.x = e.clientX;
             this.y = e.clientY;
@@ -90,29 +129,36 @@ define(["jquery", "render", "widgets/modal"], function ($) {
             });
         },
         _move: function (e, raw) {
+            var op = this.options;
             var x = e.clientX - this.x;
             var y = e.clientY - this.y;
             var d = this.d + y;
+
+            this._getSource(d);
             this._render("update", function (o) {
                 o.transform = "translate3d(0px, " + d + "px, 0px)";
                 o.transition = undefined;
+                o.marginTop = op.marginTop;
+                o.source = op.resource;
             });
             this.distance = d;
             e.preventDefault();
         },
         _up: function (e, raw) {
             var that = this;
-            var o = this.options;
-            var rows = Math.round(that.distance / o.rowHeight);
-            var d = rows * o.rowHeight;
+            var op = this.options;
+            var rows = Math.round(that.distance / op.rowHeight);
+            var d = rows * op.rowHeight;
 
-            if(d > o.yMax){
-                d = o.yMax;
-                that.distance = o.yMax;
-            }
-            else if(d < o.yMin){
-                d = o.yMin;
-                that.distance = o.yMin;
+            if(!op.loop){
+                if(d > op.yMax){
+                    d = op.yMax;
+                    that.distance = op.yMax;
+                }
+                else if(d < op.yMin){
+                    d = op.yMin;
+                    that.distance = op.yMin;
+                }
             }
 
             this._off(this.document);
@@ -121,9 +167,15 @@ define(["jquery", "render", "widgets/modal"], function ($) {
                     o.transform = "translate3d(0px, " + d + "px, 0px)";
                     o.transition = "all 0.3s cubic-bezier(0, 0, 0.2, 1.15)";
                 },
-                function () {
-                    var index = - (d / o.rowHeight) + o.indicatorTopRows;
-                    console.log(o.source[index]);
+                function (o) {
+                    var n = - (d / op.rowHeight) + op.indicatorTopRows;
+                    var index = Math.abs(n) % op.source.length;
+
+                    if(n < 0){
+                        index = op.source.length - index;
+                    }
+
+                    console.log(index, o.source[index]);
                 });
         }
     });

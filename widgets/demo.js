@@ -8,14 +8,16 @@ define(["jquery", "widgets/page"], function ($) {
 
         renders: {
             main: function (o, w) {
-                return ["widget[name=page]", [
-                    ["slot[name=title]", [
-                        ["slot[name=title]", function (s, o, w) {
-                            return ["span", s.text];
-                        }]
-                    ]],
-                    ["slot[name=content]", [
-                        ["render[name=grid]"]
+                return ["this.demo", [
+                    ["widget[name=page]", [
+                        ["slot[name=title]", [
+                            ["slot[name=title]", function (s, o, w) {
+                                return ["span", s.text];
+                            }]
+                        ]],
+                        ["slot[name=content]", [
+                            ["render[name=grid]"]
+                        ]]
                     ]]
                 ]];
             },

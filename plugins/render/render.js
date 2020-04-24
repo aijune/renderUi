@@ -1291,7 +1291,7 @@ Render.prototype = {
                 //--
 
                 $.each(that.updateCallbacks, function (i, callback) {
-                    callback.call(that);
+                    callback.call(that, that.options);
                 });
                 that.updateCallbacks = undefined;
 
@@ -1436,7 +1436,6 @@ $.extend({
             new Render(node, options);
         }
         else{
-
             if($.isFunction(options)){
                 widget = render;
                 render = options;

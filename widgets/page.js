@@ -8,7 +8,7 @@ define(["jquery", "validator"], function ($) {
 
         renders: {
             main: function(o, w){
-                return ["this.layout-article", [
+                return ["this.page", [
                     ["render[name=title]"],
                     ["render[name=content]"]
                 ]];

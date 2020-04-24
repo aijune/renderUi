@@ -62,7 +62,7 @@ define(["jquery", "jqueryextent", "render", "history", "widgets/menu", "widgets/
             body: function (o, w) {
                 return ["main.layout-body", {class: o.state}, [
                     ["render[name=aside]"],
-                    ["article.router-view"]
+                    ["article.layout-article.router-view"]
                 ]];
             },
             brand: function(o, w){
