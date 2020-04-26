@@ -1,4 +1,4 @@
-define(["jquery", "render", "widgets/modal"], function ($) {
+define(["jquery", "render", "w/modal"], function ($) {
 
     $.widget("popup", {
         options: {

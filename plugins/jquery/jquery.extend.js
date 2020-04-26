@@ -1,6 +1,6 @@
 define(["jquery"], function ($) {
 
-    var getElemState = function(elem){
+    /*var getElemState = function(elem){
         var hidden, result;
         elem = $(elem);
         hidden = elem.is(":hidden");
@@ -29,6 +29,6 @@ define(["jquery"], function ($) {
                 o.handler(state);
             }
         }
-    });
+    });*/
 
 });

@@ -8,13 +8,13 @@ requirejs = {
         router: "../plugins/router/router",
         mobileselect: "../plugins/mobileselect/mobileselect",
         //position: "../plugins/popper/position",
-        //popper: "../plugins/popper/popper",
+        popper: "../plugins/popper/popper.min",
         //bootstrap: "../plugins/bootstrap/bootstrap",
         "async-validator": "../plugins/validator/async-validator",
         validator: "../plugins/validator/validator",
         widget: "../plugins/widget/widget",
         render: "../plugins/render/render",
-        widgets: "../widgets/"
+        w: "../widgets/"
     },
     shim: {
         //bootstrap: ["popper"]

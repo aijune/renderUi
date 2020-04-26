@@ -1,4 +1,4 @@
-define(["jquery", "render", "widgets/modal"], function ($) {
+define(["jquery", "render", "w/modal"], function ($) {
 
     $.widget("picker", {
         options: {
@@ -64,7 +64,12 @@ define(["jquery", "render", "widgets/modal"], function ($) {
                         o.source.map(function (item, i) {
                             return ["li", item]
                         })
-                    ]]
+                    ]],
+                    ["div.picker-mask", {
+                        style: {
+                            backgroundSize: "100% 80px"
+                        }
+                    }]
                 ]];
             }
         },

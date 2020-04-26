@@ -162,29 +162,51 @@ Raw.prototype = {
             children: result.children || [],
             text: result.text || ""
         };
+
         $.each(result.data, function (key, value) {
             var args = [];
-            if(/^on/.test(key)){
+            if(key === "hooks"){
                 if($.isArray(value)){
                     args = slice.call(value, 1);
                     value = value[0];
                 }
-                if(value == null){
-                    delete result.data[key];
-                    return;
-                }
                 if($.isFunction(value)){
-                    result.data[key] = function () {
-                        return value.apply(that.render.widget, args.concat(slice.call(arguments, 0)));
-                    };
+                    value = value.apply(that.render.widget, args);
                 }
-                else{
-                    return $.error("Event error: " + value);
-                }
+                $.each(value, function (k, v) {
+                    that._setEventHook("on" + k, v, result.data);
+                });
+                delete result.data.hooks;
+            }
+            else{
+               that._setEventHook(key, value, result.data);
             }
         });
 
         return result;
+    },
+
+    _setEventHook: function(key, value, data){
+        var that = this;
+        var args = [];
+        if(/^on/.test(key)){
+            if($.isArray(value)){
+                args = slice.call(value, 1);
+                value = value[0];
+            }
+            if(value == null){
+                delete data[key];
+                return;
+            }
+            if($.isFunction(value)){
+                data[key] = function () {
+                    return value.apply(that.render.widget, args.concat(slice.call(arguments, 0)));
+                };
+            }
+            else{
+                return $.error("Event error: " + value);
+            }
+        }
     },
 
     getArrayChild: function(child, children){
@@ -362,6 +384,15 @@ Raw.prototype = {
                         instance.option( $.extend(added.data || {}, {slots: slots}));
                         if (instance._update){
                             instance._update();
+                        }
+                    }
+                },
+                destroy: function (raw) {
+                    var instance = $(raw.node)[name]("instance");
+                    if(instance){
+                        instance.option( $.extend(added.data || {}, {slots: slots}));
+                        if (instance._destroy){
+                            instance._destroy();
                         }
                     }
                 }

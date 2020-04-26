@@ -1,12 +1,12 @@
-define(["jquery", "widgets/code", "widgets/demo", "widgets/dropdown"], function ($, code) {
+define(["jquery", "w/code", "w/demo", "w/dropdown"], function ($, code) {
 
     var codeBase = `
         $(elem).render(function () {
             return ["widget[name=dropdown]", [
                 ["slot[name=toggle]", [
-                    ["button.btn.btn-secondary.dropdown-toggle", "Dropdown button"]
+                    ["button.btn.btn-secondary.dropdown-toggle", "Dropdown button"]                                     
                 ]],
-                ["slot[name=menu]", [
+                ["slot[name=menu]", [                    
                     ["a.dropdown-item[href=#]", "Action"],
                     ["a.dropdown-item[href=#]", "Another action"],
                     ["a.dropdown-item[href=#]", "Something else here"]
@@ -17,7 +17,7 @@ define(["jquery", "widgets/code", "widgets/demo", "widgets/dropdown"], function 
 
     var codeRight = `
         $(elem).render(function () {
-            return ["widget[name=dropdown]", [
+            return ["widget[name=dropdown]", {placement: "bottom-end"}, [
                 ["slot[name=toggle]", [
                     ["button.btn.btn-secondary.dropdown-toggle", "Dropdown button"]
                 ]],

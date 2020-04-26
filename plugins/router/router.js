@@ -36,51 +36,66 @@ define(["jquery", "history"], function ($) {
         },
 
         _match: function (path, router) {
+            var that = this;
             var handler, view, prevPath;
 
             this.count++;
             prevPath = this.prevPaths[this.count] || {};
 
-            if($.isFunction(router.layout)){
-                if(router.path !== prevPath.path){
-                    router.layout.call(this, router.view, this.state);
-                    view = router.view.find(".router-view");
+            $.Deferred(function (dfd) {
+                if($.isFunction(router.layout)){
+                    if(router.path !== prevPath.path){
+                        router.layout.call(this, router.view, this.state, function () {
+                            view = router.view.find(".router-view");
+                            dfd.resolveWith(that);
+                        });
+                    }
+                    else{
+                        view = prevPath.view;
+                        dfd.resolveWith(that);
+                    }
                 }
                 else{
-                    view = prevPath.view;
+                    view = router.view;
+                    dfd.resolveWith(that);
                 }
-            }
+            }).done(function () {
+                this.paths.push({
+                    path: router.path,
+                    view: view
+                });
 
-            this.paths.push({
-                path: router.path,
-                view: view
+                $.each(router.routes, function (key, route) {
+                    if(path === key){
+                        handler = route;
+                        return  false;
+                    }
+                    else if(path.indexOf(key) === 0){
+                        handler = route;
+                        handler.path = key;
+                    }
+                });
+
+                if($.isFunction(handler)){
+                    $.each(view.data(), function (key, value) {
+                        if(/^widgets/.test(key)){
+                            value.destroy();
+                        }
+                    });
+                    handler.call(this, view, this.state);
+                }
+                else if(handler && handler.routes){
+                    handler.view = view || router.view;
+                    return this._match(path.substring(handler.path.length), handler);
+                }
+                else{
+                    this.error.call(this, this.view, this.state);
+                }
+
+                this.count = -1;
+                this.prevPaths = this.paths;
+                this.paths = [];
             });
-
-            $.each(router.routes, function (key, route) {
-                if(path === key){
-                    handler = route;
-                    return  false;
-                }
-                else if(path.indexOf(key) === 0){
-                    handler = route;
-                    handler.path = key;
-                }
-            });
-
-            if($.isFunction(handler)){
-                handler.call(this, view, this.state);
-            }
-            else if(handler && handler.routes){
-                handler.view = view || router.view;
-                return this._math(path.substring(handler.path.length), handler);
-            }
-            else{
-                this.error.call(this, this.view, this.state);
-            }
-
-            this.count = -1;
-            this.prevPaths = this.paths;
-            this.paths = [];
         },
 
         go: function (o) {

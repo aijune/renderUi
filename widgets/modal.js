@@ -1,7 +1,6 @@
 define(["jquery", "render"], function ($) {
 
     $.widget("modal", {
-        defaultTag: "div",
         options: {
             type: "",
 

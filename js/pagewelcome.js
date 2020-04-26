@@ -1,4 +1,4 @@
-define(["jquery", "widgets/page"], function ($) {
+define(["jquery", "w/page"], function ($) {
 
     $.widget("pagewelcome", {
 

@@ -1,8 +1,11 @@
-define(["jquery", "render"], function ($) {
+define(["jquery", "popper", "render"], function ($, Popper) {
 
     $.widget("dropdown", {
         defaultTag: "div",
         options: {
+            placement: "bottom-start",
+            arrow: true,
+
             isDropdown: false
         },
         renders: {
@@ -20,10 +23,12 @@ define(["jquery", "render"], function ($) {
                     ["slot[name=menu]", function (s, o, w) {
                         return ["div.dropdown-menu", {
                             class: $.extend({}, s.data.class, {
-                                show: {init: o.isDropdown && "add"}
+                                show: {init: o.isDropdown && "add"},
+                                arrow: {init: o.arrow && "add"}
                             }),
-                            style: o.menuStyle
+                            hooks: w._hooksMenu
                         }, [
+                            o.arrow && ["div.arrow[x-arrow]"],
                             s.children
                         ]];
                     }]
@@ -49,39 +54,28 @@ define(["jquery", "render"], function ($) {
             this.toggle = this.element.find(".dropdown-toggle");
             this.menu = this.element.find(".dropdown-menu");
             this.items = this.menu.find(".dropdown-item");
+
         },
         _clickToggle: function (e, raw) {
-            var that = this;
-
-            $.position({
-                element: this.menu,
-                target: this.toggle,
-                handler: function(state){
-                    var pos = that._position(state);
-                    that._render("update", function (o) {
-                        o.isDropdown = !o.isDropdown;
-                        o.menuStyle = {
-                            left: pos.left,
-                            top: pos.top
-                        };
-                    });
-                }
+            this._render("update", function (o) {
+                o.isDropdown = !o.isDropdown;
             });
         },
-        _position: function(state){
-            var right = this.menu.hasClass("dropdown-menu-right");
-            var offset = 0;
 
-            if(right){
-                return {
-                    left: state.target.position.left + state.target.width - state.element.width,
-                    top: state.target.position.top + state.target.height
-                }
-            }
-            else{
-                return {
-                    left: state.target.position.left,
-                    top: state.target.position.top + state.target.height
+        _hooksMenu: function(){
+            return {
+                create: function (raw) {
+                    this._delay(function () {
+                        this.popper = new Popper(this.toggle[0], this.menu[0], {
+                            placement: this.options.placement
+                        });
+                    });
+                },
+                update: function (raw) {
+                    this.popper.update();
+                },
+                destroy: function (raw) {
+                    this.popper.destroy();
                 }
             }
         },

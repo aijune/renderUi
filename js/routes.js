@@ -1,12 +1,15 @@
-define(["config", "jquery", "router", "widgets/layout"], function(config, $){
+define(["config", "jquery", "router"], function(config, $){
 
     $.router({
 
         mode: "hash",
 
-        layout: function(view, state){
-            view.render(function () {
-                return ["widget[name=layout]", config.layout];
+        layout: function(view, state, next){
+            require(["w/layout"], function () {
+                view.render(function () {
+                    return ["widget[name=layout]", config.layout];
+                });
+                next();
             });
         },
 

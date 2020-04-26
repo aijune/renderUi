@@ -1,4 +1,4 @@
-define(["jquery", "widgets/article"], function ($) {
+define(["jquery", "w/article"], function ($) {
 
     $.widget("pageforms", {
 

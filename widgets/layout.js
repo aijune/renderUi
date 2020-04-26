@@ -1,4 +1,4 @@
-define(["jquery", "jqueryextent", "render", "history", "widgets/menu", "widgets/dropdown"], function ($) {
+define(["jquery", "jqueryextent", "render", "history", "w/menu", "w/dropdown"], function ($) {
 
     $.widget("layout", {
         options: {
@@ -78,11 +78,11 @@ define(["jquery", "jqueryextent", "render", "history", "widgets/menu", "widgets/
                 ]];
             },
             topbarNavs: function(item){
-                return ["widget[name=dropdown]", [
+                return ["widget[name=dropdown]", {placement: "bottom-end"}, [
                     ["slot[name=toggle]", [
                         ["a.dropdown-toggle[href=#]", item.toggle]
                     ]],
-                    ["slot.dropdown-menu-right[name=menu]", [
+                    ["slot[name=menu]", [
                         ["render[name=topbarSubs]", item.subs]
                     ]]
                 ]];
