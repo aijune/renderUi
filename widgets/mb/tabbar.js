@@ -1,15 +1,12 @@
 define(["jquery", "render", "w/dropdown"], function ($) {
 
     /*-------------------------------------------------
-    ["widget[name=navbar]", {
-        title: "首页",
-        leftArrow: true,
-        leftText: "返回",
-        rightText: "菜单",
-        rightMenu: [
+    ["widget[name=tabbar]", {
+        items: [
             {
                 icon: ".fa.fa-user-plus",
                 text: "添加朋友",
+                dot: true,
                 click: function (data, e, raw) {
                     console.log(data, e, raw);
                 }
@@ -24,47 +21,13 @@ define(["jquery", "render", "w/dropdown"], function ($) {
             {
                 icon: ".fa.fa-rss-square",
                 text: "订阅RSS",
+                badge: "20",
                 click: function (data, e, raw) {
                     console.log(data, e, raw);
                 }
             }
-        ],
-        fixed: true,
-        placeholder: true,
-        clickLeft: function (data, e, raw) {
-            console.log(data, e, raw);
-        },
-        clickRight: function (data, e, raw) {
-            console.log(data, e, raw);
-        }
+        ]
     }]
-    //-------------------------------------------------
-    ["widget[name=navbar]", {
-        fixed: true,
-        placeholder: true
-    }, [
-        ["slot[name=left]", [
-            ["a[href=#]", {
-                onclick: function () {
-                    console.log("left")
-                }
-            }, "后退"]
-        ]],
-        ["slot[name=title]", [
-            ["span", {
-                onclick: function () {
-                    console.log("title")
-                }
-            }, "导航标题"]
-        ]],
-        ["slot[name=right]", [
-            ["a[href=#]", {
-                onclick: function () {
-                    console.log("right")
-                }
-            }, "前进"]
-        ]]
-    ]]
     -------------------------------------------------*/
 
     $.widget("tabbar", {
@@ -85,10 +48,13 @@ define(["jquery", "render", "w/dropdown"], function ($) {
                     return ["div.mb-tabbar-item", {
                         class: {
                             "mb-tabbar-item-active": {init: i === o.active && "add"}
-                        }
+                        },
+                        onclick: [w._clickItem, item, i]
                     }, [
                         !!item.icon && ["div.mb-tabbar-item-icon-wrap", [
-                            ["i.mb-tabbar-item-icon" + item.icon]
+                            ["i.mb-tabbar-item-icon" + item.icon],
+                            !!item.dot && ["div.mb-info.mb-info-dot"],
+                            !!item.badge && ["div.mb-info", item.badge]
                         ]],
                         !!item.text && ["div.mb-tabbar-item-text", item.text]
                     ]]
@@ -99,15 +65,17 @@ define(["jquery", "render", "w/dropdown"], function ($) {
         _create: function () {
             this._render();
         },
-        _clickLeft: function (o, e, raw) {
-            if(o.clickLeft){
-                o.clickLeft({}, e, raw);
-            }
-        },
-        _clickRight: function (o, e, raw) {
-            if(o.clickRight){
-                o.clickRight({}, e, raw);
-            }
+        _clickItem: function (item, i, e, raw) {
+            this._render("update",
+                function (o) {
+                    o.active = i;
+                },
+                function () {
+                    if(item.click){
+                        item.click(item, e, raw);
+                    }
+                }
+            );
         }
     });
 });

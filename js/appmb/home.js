@@ -40,14 +40,20 @@ define(["jquery", "render", "w/mb/navbar", "w/mb/tabbar"], function ($) {
                             console.log(data, e, raw);
                         }
                     }],
-                    ["div", "qqqqqqqqqqqqqqqqqqqqq"],
+                    ["div.list-group", [
+                        ["a.list-group-item.list-group-item-action[href=#]", "Dapibus ac facilisis in"],
+                        ["a.list-group-item.list-group-item-action[href=#]", "Morbi leo risus"],
+                        ["a.list-group-item.list-group-item-action[href=#]", "Porta ac consectetur ac"],
+                        ["a.list-group-item.list-group-item-action[href=#]", "Vestibulum at eros"]
+                    ]],
                     ["widget[name=tabbar]", {
                         items: [
                             {
                                 icon: ".fa.fa-user-plus",
                                 text: "添加朋友",
+                                dot: true,
                                 click: function (data, e, raw) {
-
+                                    console.log(data, e, raw);
                                 }
                             },
                             {
@@ -60,6 +66,7 @@ define(["jquery", "render", "w/mb/navbar", "w/mb/tabbar"], function ($) {
                             {
                                 icon: ".fa.fa-rss-square",
                                 text: "订阅RSS",
+                                badge: "20",
                                 click: function (data, e, raw) {
                                     console.log(data, e, raw);
                                 }

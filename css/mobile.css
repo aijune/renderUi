@@ -14,6 +14,34 @@ a:hover{
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+.mb-info{
+    position: absolute;
+    top: 0;
+    right: 0;
+    box-sizing: border-box;
+    min-width: 16px;
+    padding: 0 3px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 12px;
+    font-family: Avenir-Heavy, PingFang SC, Helvetica Neue, Arial, sans-serif;
+    line-height: 14px;
+    text-align: center;
+    background-color: #ee0a24;
+    border: 1px solid #fff;
+    border-radius: 16px;
+    -webkit-transform: translate(50%, -50%);
+    transform: translate(50%, -50%);
+    -webkit-transform-origin: 100%;
+    transform-origin: 100%;
+}
+.mb-info-dot{
+    width: 8px;
+    min-width: 0;
+    height: 8px;
+    background-color: #ee0a24;
+    border-radius: 100%;
+}
 
 /*mb-navbar*/
 
@@ -129,4 +157,7 @@ a:hover{
 .mb-tabbar-item-icon{
     display: block;
     min-width: 1em;
+}
+.mb-tabbar-item .mb-info {
+    margin-top: 2px;
 }

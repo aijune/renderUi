@@ -89,7 +89,6 @@ define(["jquery", "render", "w/dropdown"], function ($) {
                     ["render[name=left]"],
                     ["render[name=title]"],
                     ["render[name=right]"]
-
                 ]];
                 return o.placeholder ? ["this.mb-navbar-placeholder", bar] : bar;
             },
