@@ -1178,8 +1178,6 @@ Diff.prototype = {
 var renderUuid = 0;
 
 var Render = function (node, options) {
-    var renders;
-
     this.node = node;
     this.uuid = renderUuid++;
     this.eventNamespace = "._render_" + this.uuid;
@@ -1188,7 +1186,7 @@ var Render = function (node, options) {
 
     this.render = options.render;
     this.options = $.widget.extend({}, options.options);
-    this.widget = options.widget || this;
+    this.widget = options.widget || {};
 
     //--
 

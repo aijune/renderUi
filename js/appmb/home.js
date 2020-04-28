@@ -1,79 +1,72 @@
-define(["jquery", "render", "w/mb/navbar", "w/mb/tabbar"], function ($) {
+define(["jquery", "render", "w/mb/navbar", "w/mb/tabbar", "w/mb/listgroup"], function ($) {
     $.widget("home", {
         renders: {
             main: function (o, w) {
-                return ["this", [
-                    ["widget[name=navbar]", {
-                        title: "首页",
-                        leftArrow: true,
-                        leftText: "返回",
-                        rightText: "菜单",
-                        rightMenu: [
-                            {
-                                icon: ".fa.fa-user-plus",
-                                text: "添加朋友",
-                                click: function (data, e, raw) {
-                                    console.log(data, e, raw);
-                                }
-                            },
-                            {
-                                icon: ".fa.fa-comments",
-                                text: "评论",
-                                click: function (data, e, raw) {
-                                    console.log(data, e, raw);
-                                }
-                            },
-                            {
-                                icon: ".fa.fa-rss-square",
-                                text: "订阅RSS",
-                                click: function (data, e, raw) {
-                                    console.log(data, e, raw);
-                                }
-                            }
-                        ],
-                        fixed: true,
-                        placeholder: true,
-                        clickLeft: function (data, e, raw) {
+                return ["this.home", [
+                    ["render[name=header]"],
+                    ["render[name=body]"],
+                    ["render[name=footer]"]
+                ]]
+            },
+            header: function(o, w){
+                return ["widget[name=navbar]", {
+                    title: "首页",
+                    leftArrow: true,
+                    leftText: "返回",
+                    rightText: "菜单",
+                    rightMenu: {
+                        change: function (data, e, raw) {
                             console.log(data, e, raw);
                         },
-                        clickRight: function (data, e, raw) {
-                            console.log(data, e, raw);
-                        }
-                    }],
-                    ["div.list-group", [
-                        ["a.list-group-item.list-group-item-action[href=#]", "Dapibus ac facilisis in"],
-                        ["a.list-group-item.list-group-item-action[href=#]", "Morbi leo risus"],
-                        ["a.list-group-item.list-group-item-action[href=#]", "Porta ac consectetur ac"],
-                        ["a.list-group-item.list-group-item-action[href=#]", "Vestibulum at eros"]
-                    ]],
-                    ["widget[name=tabbar]", {
                         items: [
-                            {
-                                icon: ".fa.fa-user-plus",
-                                text: "添加朋友",
-                                dot: true,
-                                click: function (data, e, raw) {
-                                    console.log(data, e, raw);
-                                }
-                            },
-                            {
-                                icon: ".fa.fa-comments",
-                                text: "评论",
-                                click: function (data, e, raw) {
-                                    console.log(data, e, raw);
-                                }
-                            },
-                            {
-                                icon: ".fa.fa-rss-square",
-                                text: "订阅RSS",
-                                badge: "20",
-                                click: function (data, e, raw) {
-                                    console.log(data, e, raw);
-                                }
-                            }
+                            {icon: ".fa.fa-user-plus", text: "添加朋友"},
+                            {icon: ".fa.fa-comments", text: "评论"},
+                            {icon: ".fa.fa-rss-square", text: "订阅RSS"}
                         ]
-                    }]
-                ]]
+                    }
+                }];
+            },
+            body: function(o, w){
+                return ["widget[name=listgroup]", {
+                    items: [
+                        {
+                            title: "我是标题",
+                            items: [
+                                {icon: ".fa.fa-user-plus", label: "添加朋友", value: "我是朋友", arrow: true},
+                                {icon: ".fa.fa-comments", label: "评论", value: "我是评论", arrow: true},
+                                {icon: ".fa.fa-rss-square", label: "订阅RSS", value: "我是订阅", arrow: true}
+                            ]
+                        },
+                        {
+                            title: "我是标题",
+                            items: [
+                                {icon: ".fa.fa-user-plus", label: "添加朋友", value: "我是朋友", arrow: true},
+                                {icon: ".fa.fa-comments", label: "评论", value: "我是评论", arrow: true},
+                                {icon: ".fa.fa-rss-square", label: "订阅RSS", value: "我是订阅", arrow: true}
+                            ]
+                        },
+                        {
+                            title: "我是标题",
+                            items: [
+                                {icon: ".fa.fa-user-plus", label: "添加朋友", value: "我是朋友", arrow: true},
+                                {icon: ".fa.fa-comments", label: "评论", value: "我是评论", arrow: true},
+                                {icon: ".fa.fa-rss-square", label: "订阅RSS", value: "我是订阅", arrow: true}
+                            ]
+                        }
+                    ]
+                }]
+            },
+            footer: function (o, w) {
+                return ["widget[name=tabbar]", {
+                    change: function(data, e, raw){
+                        console.log(data, e, raw);
+                    },
+                    items: [
+                        {icon: ".fa.fa-user-plus", text: "添加朋友", dot: true},
+                        {icon: ".fa.fa-comments", text: "评论"},
+                        {icon: ".fa.fa-rss-square", text: "订阅RSS", badge: "20"}
+                    ]
+                }];
             }
         },
         _create: function () {

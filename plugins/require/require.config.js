@@ -2,7 +2,7 @@ requirejs = {
     baseUrl: "/renderUi/js",
     urlArgs: "v=20200220",
     paths: {
-        jquery: "../plugins/jquery/jquery",
+        jquery: "../plugins/jquery/jquery.3.4.1",
         jqueryextent: "../plugins/jquery/jquery.extend",
         history: "../plugins/history/history",
         router: "../plugins/router/router",

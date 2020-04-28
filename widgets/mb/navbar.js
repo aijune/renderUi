@@ -6,29 +6,16 @@ define(["jquery", "render", "w/dropdown"], function ($) {
         leftArrow: true,
         leftText: "返回",
         rightText: "菜单",
-        rightMenu: [
-            {
-                icon: ".fa.fa-user-plus",
-                text: "添加朋友",
-                click: function (data, e, raw) {
-                    console.log(data, e, raw);
-                }
+        rightMenu: {
+            change: function (data, e, raw) {
+                console.log(data, e, raw);
             },
-            {
-                icon: ".fa.fa-comments",
-                text: "评论",
-                click: function (data, e, raw) {
-                    console.log(data, e, raw);
-                }
-            },
-            {
-                icon: ".fa.fa-rss-square",
-                text: "订阅RSS",
-                click: function (data, e, raw) {
-                    console.log(data, e, raw);
-                }
-            }
-        ],
+            items: [
+                {icon: ".fa.fa-user-plus", text: "添加朋友"},
+                {icon: ".fa.fa-comments", text: "评论"},
+                {icon: ".fa.fa-rss-square", text: "订阅RSS"}
+            ]
+        },
         fixed: true,
         placeholder: true,
         clickLeft: function (data, e, raw) {
@@ -68,7 +55,7 @@ define(["jquery", "render", "w/dropdown"], function ($) {
     -------------------------------------------------*/
 
     $.widget("navbar", {
-        defaultTag: "nav",
+        defaultTag: "div",
         options: {
             title: "",
             leftArrow: false,
@@ -131,17 +118,17 @@ define(["jquery", "render", "w/dropdown"], function ($) {
                         }]
                     ]];
                 }
-                else if($.isArray(o.rightMenu)){
-                    return ["widget.dropdown.mb-navbar-right[name=dropdown]", [
+                else if(o.rightMenu && $.isArray(o.rightMenu.items)){
+                    return ["widget.dropdown.mb-navbar-right[name=dropdown]", {placement: "bottom-end"}, [
                         ["slot[name=toggle]", [
                             ["a.dropdown-toggle[href=#]", [
                                 !!o.rightText && ["span.mb-navbar-text", o.rightText],
                                 ["i.fa.fa-plus.mb-navbar-menu"]
                             ]]
                         ]],
-                        ["slot[name=menu]", o.rightMenu.map(function (item, i) {
+                        ["slot[name=menu]", o.rightMenu.items.map(function (item, i) {
                             return ["a.dropdown-item[href=#]", {
-                                onclick: [item.click, item]
+                                onclick: [o.rightMenu.change, {item: item, index: i}]
                             }, [
                                 ["i" + item.icon, {style: {marginRight: "5px"}}],
                                 ["span", item.text]

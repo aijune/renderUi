@@ -2,29 +2,23 @@ define(["jquery", "render", "w/dropdown"], function ($) {
 
     /*-------------------------------------------------
     ["widget[name=tabbar]", {
+        change: function(data, e, raw){
+            console.log(data, e, raw);
+        },
         items: [
             {
                 icon: ".fa.fa-user-plus",
                 text: "添加朋友",
-                dot: true,
-                click: function (data, e, raw) {
-                    console.log(data, e, raw);
-                }
+                dot: true
             },
             {
                 icon: ".fa.fa-comments",
-                text: "评论",
-                click: function (data, e, raw) {
-                    console.log(data, e, raw);
-                }
+                text: "评论"
             },
             {
                 icon: ".fa.fa-rss-square",
                 text: "订阅RSS",
-                badge: "20",
-                click: function (data, e, raw) {
-                    console.log(data, e, raw);
-                }
+                badge: "20"
             }
         ]
     }]
@@ -70,9 +64,9 @@ define(["jquery", "render", "w/dropdown"], function ($) {
                 function (o) {
                     o.active = i;
                 },
-                function () {
-                    if(item.click){
-                        item.click(item, e, raw);
+                function (o) {
+                    if(o.change){
+                        o.change({item: item, index: i}, e, raw);
                     }
                 }
             );

@@ -161,3 +161,59 @@ a:hover{
 .mb-tabbar-item .mb-info {
     margin-top: 2px;
 }
+
+/*listgroup*/
+
+.mb-listgroup-wrap{
+    box-sizing: border-box;
+    height: calc(100vh - 96px);
+    padding-bottom: 20px;
+    overflow: auto;
+}
+.mb-listgroup-header{
+    margin: 0;
+    padding: 32px 16px 16px;
+    color: rgba(69, 90, 100, 0.6);
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+}
+.mb-listgroup-body{
+    background-color: #fff;
+}
+.mb-listgroup-item{
+    position: relative;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px 16px;
+    overflow: hidden;
+    color: #323233;
+    font-size: 14px;
+    line-height: 24px;
+    background-color: #fff;
+}
+.mb-listgroup-icon{
+    min-width: 1em;
+    height: 24px;
+    font-size: 16px;
+    line-height: 24px;
+}
+.mb-listgroup-icon.left{
+    margin-right: 5px;
+}
+.mb-listgroup-text{
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+}
+.mb-listgroup-text.value{
+    position: relative;
+    overflow: hidden;
+    color: #969799;
+    text-align: right;
+    vertical-align: middle;
+    word-wrap: break-word;
+}
