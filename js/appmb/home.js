@@ -32,25 +32,33 @@ define(["jquery", "render", "w/mb/navbar", "w/mb/tabbar", "w/mb/listgroup"], fun
                         {
                             title: "我是标题",
                             items: [
-                                {icon: ".fa.fa-user-plus", label: "添加朋友", value: "我是朋友", arrow: true},
-                                {icon: ".fa.fa-comments", label: "评论", value: "我是评论", arrow: true},
-                                {icon: ".fa.fa-rss-square", label: "订阅RSS", value: "我是订阅", arrow: true}
+                                {icon: ".fa.fa-user-plus", label: "添加朋友", value: "我是朋友", link: {}},
+                                {icon: ".fa.fa-comments", label: "评论", value: "我是评论", link: {}},
+                                {icon: ".fa.fa-rss-square", label: "订阅RSS", value: "我是订阅", link: {}}
                             ]
                         },
                         {
                             title: "我是标题",
                             items: [
-                                {icon: ".fa.fa-user-plus", label: "添加朋友", value: "我是朋友", arrow: true},
-                                {icon: ".fa.fa-comments", label: "评论", value: "我是评论", arrow: true},
-                                {icon: ".fa.fa-rss-square", label: "订阅RSS", value: "我是订阅", arrow: true}
+                                {icon: ".fa.fa-user-plus", label: "添加朋友", value: "我是朋友", link: {}},
+                                {icon: ".fa.fa-comments", label: "评论", value: "我是评论", link: {}},
+                                {icon: ".fa.fa-rss-square", label: "订阅RSS", value: "我是订阅", link: {}}
                             ]
                         },
                         {
                             title: "我是标题",
                             items: [
-                                {icon: ".fa.fa-user-plus", label: "添加朋友", value: "我是朋友", arrow: true},
-                                {icon: ".fa.fa-comments", label: "评论", value: "我是评论", arrow: true},
-                                {icon: ".fa.fa-rss-square", label: "订阅RSS", value: "我是订阅", arrow: true}
+                                {icon: ".fa.fa-user-plus", label: "添加朋友", value: "我是朋友", link: {}},
+                                {icon: ".fa.fa-comments", label: "评论", value: "我是评论", link: {}},
+                                {icon: ".fa.fa-rss-square", label: "订阅RSS", value: "我是订阅", link: {}}
+                            ]
+                        },
+                        {
+                            title: "我是标题",
+                            items: [
+                                {icon: ".fa.fa-user-plus", label: "添加朋友", value: "我是朋友", link: true},
+                                {icon: ".fa.fa-comments", label: "评论", value: "我是评论", link: true},
+                                {icon: ".fa.fa-rss-square", label: "订阅RSS", value: "我是订阅", link: true}
                             ]
                         }
                     ]
